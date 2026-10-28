@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Akun - LITERA</title>
+    <!-- Pemanggilan File CSS Lokal -->
+    <link rel="stylesheet" href="register.css">
+    <!-- FontAwesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Lapisan Overlay Blur Estetik -->
+    <div class="bg-overlay"></div>
+
+    <div class="auth-container">
+        <!-- Kartu Glassmorphism Utama -->
+        <div class="glass-card">
+            
+            <!-- Logo & Heading -->
+            <div class="auth-header">
+                <div class="logo-icon-wrapper">
+                    <img src="../foto/logo.jpeg" alt="Logo Litera" class="logo-img">
+                </div>
+                <div class="brand-name">LITERA</div>
+                <h1>Bergabung dengan Litera</h1>
+                <p>Mulai perjalanan hemat kuliah & barter buku bekas Anda</p>
+            </div>
+
+            <!-- Form Registrasi (onsubmit inline telah dihapus) -->
+            <form class="auth-form" id="form-register">
+                
+                <div class="input-group">
+                    <span class="input-icon"><i class="fa-solid fa-user"></i></span>
+                    <input type="text" id="reg-nama" placeholder="Nama Lengkap" required>
+                </div>
+
+                <div class="input-group">
+                    <span class="input-icon"><i class="fa-solid fa-envelope"></i></span>
+                    <input type="email" id="reg-email" placeholder="Email Akademik / Pribadi" required>
+                </div>
+
+                <div class="input-group">
+                    <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+                    <input type="password" id="reg-password" placeholder="Kata Sandi" required>
+                    <span class="password-toggle"><i class="fa-solid fa-eye-slash"></i></span>
+                </div>
+
+                <div class="terms-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" required>
+                        <span>Saya menyetujui syarat & ketentuan serta kebijakan privasi Litera</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <span>Daftar Sekarang</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>ATAU</span>
+            </div>
+
+            <!-- Social Login Buttons -->
+            <div class="social-login">
+                <button type="button" class="btn-social">
+                    <i class="fa-brands fa-google" style="color: #ea4335;"></i>
+                    <span>Google</span>
+                </button>
+                <button type="button" class="btn-social">
+                    <i class="fa-brands fa-apple" style="color: #111111;"></i>
+                    <span>Apple</span>
+                </button>
+            </div>
+
+            <!-- Footer Link -->
+            <div class="auth-footer">
+                <span>Sudah punya akun? <a href="/login/index.html">Masuk di sini</a></span>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+  const registerForm = document.getElementById('form-register');
+  if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nama = document.getElementById('reg-nama').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+
+      try {
+        const response = await fetch('http://localhost:3000/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nama, email, password })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert('Registrasi Berhasil! Silakan Login.');
+          window.location.href = '../login/index.html';
+        } else {
+          alert(result.message);
+        }
+      } catch (err) {
+        alert('Gagal terhubung ke server backend! Pastikan node server.js sudah berjalan.');
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

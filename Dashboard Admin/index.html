@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - LITERA Hub</title>
+    <!-- Menghubungkan ke file CSS terpisah -->
+    <link rel="stylesheet" href="dashboardadmin.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- HEADER NAVIGATION ADMIN -->
+    <header class="site-header">
+        <div class="header-container">
+            <!-- Brand Logo Litera -->
+            <div class="brand-logo" onclick="location.href='admin-dashboard.html'">
+                <img src="../foto/logo.jpeg" alt="Logo Litera" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=100&auto=format&fit=crop&q=80'">
+                <div class="brand-tagline">
+                    <span class="brand-tagline-title">LITERA ADMIN</span>
+                    <span class="brand-tagline-sub">Management Hub</span>
+                </div>
+            </div>
+
+            <!-- Admin Profile Info -->
+            <div class="header-user-info">
+                <div class="notification-badge">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="dot"></span>
+                </div>
+                <div class="user-profile-btn" onclick="showAdminSection('admin-profile-section')" style="cursor: pointer;">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80" alt="Admin Avatar" class="avatar" id="header-admin-avatar">
+                    <div class="profile-text">
+                        <span class="username" id="header-admin-name">Super Admin</span>
+                        <span class="user-role">Litera Headquarters</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- DASHBOARD CONTAINER -->
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR ADMIN -->
+        <aside class="sidebar">
+            <div class="user-card-summary">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80" alt="Admin" class="sidebar-avatar" id="sidebar-admin-avatar">
+                <h4 class="user-name" id="sidebar-admin-name">Super Admin</h4>
+                <p class="user-email" id="sidebar-admin-email">admin@litera.app</p>
+                <span class="badge-status role-admin"><i class="fa-solid fa-shield-halved"></i> Administrator</span>
+            </div>
+
+            <nav class="sidebar-menu">
+                <button onclick="showAdminSection('overview-admin')" id="menu-overview-admin" class="menu-item active">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Statistik Sistem</span>
+                </button>
+                <button onclick="showAdminSection('qc-section')" id="menu-qc" class="menu-item">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                    <span>Verifikasi QC Buku</span>
+                </button>
+                <button onclick="showAdminSection('orders-admin')" id="menu-orders-admin" class="menu-item">
+                    <i class="fa-solid fa-box-archive"></i>
+                    <span>Kelola Pesanan</span>
+                </button>
+                <button onclick="showAdminSection('users-section')" id="menu-users" class="menu-item">
+                    <i class="fa-solid fa-users-gear"></i>
+                    <span>Data Pengguna</span>
+                </button>
+                <button onclick="showAdminSection('admin-profile-section')" id="menu-admin-profile" class="menu-item">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>Perbarui Profil Admin</span>
+                </button>
+                <a href="login.html" class="menu-item logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Keluar (Logout)</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- MAIN CONTENT ADMIN -->
+        <main class="main-content">
+
+            <!-- SECTION 1: STATISTIK SISTEM -->
+            <div id="overview-admin" class="dashboard-section active-section">
+                <div class="section-header">
+                    <h2>Panel Kontrol Utama</h2>
+                    <p>Ringkasan data operasional platform Litera secara real-time.</p>
+                </div>
+
+                <!-- STATS GRID -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon red"><i class="fa-solid fa-book"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Buku Katalog</span>
+                            <span class="stat-value">1,420 Unit</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon dark"><i class="fa-solid fa-user-group"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Pengguna Terdaftar</span>
+                            <span class="stat-value">850 Akun</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fa-solid fa-hand-holding-hand"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Antrean Titip Jual</span>
+                            <span class="stat-value">18 Buku</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red"><i class="fa-solid fa-rupiah-sign"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Pendapatan Bulan Ini</span>
+                            <span class="stat-value">Rp 12.450.000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QUICK ACTIVITY TABLE -->
+                <div class="content-card">
+                    <div class="card-title-bar">
+                        <h3><i class="fa-solid fa-clock-rotate-left"></i> Aktivitas Transaksi Terbaru</h3>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID Transaksi</th>
+                                <th>Pembeli</th>
+                                <th>Buku</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>#TRX-9921</strong></td>
+                                <td>Reza Eka Putri</td>
+                                <td>Filosofi Teras & Filsafat Sains</td>
+                                <td class="price">Rp 113.000</td>
+                                <td><span class="status-badge blue">Dikirim</span></td>
+                            </tr>
+                            <tr>
+                                <td>#TRX-9920</td>
+                                <td>Ahmad Fauzan</td>
+                                <td>Atomic Habits</td>
+                                <td class="price">Rp 85.000</td>
+                                <td><span class="status-badge green">Selesai</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION 2: VERIFIKASI QC BUKU TITIP JUAL -->
+            <div id="qc-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Verifikasi Quality Control (QC) Buku Titipan</h2>
+                    <p>Periksa kondisi fisik dan setujui buku yang diajukan oleh pengguna untuk dijual.</p>
+                </div>
+
+                <div class="content-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Pengaju</th>
+                                <th>Judul Buku</th>
+                                <th>Kondisi Fisik</th>
+                                <th>Harga Rekomendasi</th>
+                                <th>Aksi Admin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Reza Eka Putri</strong></td>
+                                <td>Animal Farm - George Orwell</td>
+                                <td>Mulus (95%)</td>
+                                <td class="price">Rp 45.000</td>
+                                <td>
+                                    <button class="btn-success-sm" onclick="alert('Buku berhasil disetujui & masuk katalog!')"><i class="fa-solid fa-check"></i> Setujui</button>
+                                    <button class="btn-danger-sm" onclick="alert('Pengajuan buku ditolak.')"><i class="fa-solid fa-xmark"></i> Tolak</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Siti Aminah</strong></td>
+                                <td>Pulang - Leila S. Chudori</td>
+                                <td>Ada Lipatan di Cover (80%)</td>
+                                <td class="price">Rp 50.000</td>
+                                <td>
+                                    <button class="btn-success-sm" onclick="alert('Buku berhasil disetujui!')"><i class="fa-solid fa-check"></i> Setujui</button>
+                                    <button class="btn-danger-sm" onclick="alert('Pengajuan buku ditolak.')"><i class="fa-solid fa-xmark"></i> Tolak</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION 3: KELOLA PESANAN -->
+            <div id="orders-admin" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Manajemen Pesanan & Pengiriman</h2>
+                    <p>Perbarui status resi pengiriman kurir untuk pesanan buku pelanggan.</p>
+                </div>
+                <div class="content-card">
+                    <p style="font-size: 0.8125rem; color: var(--litera-gray);">Fitur manajemen resi dan pembaruan kurir otomatis terhubung ke sistem logistik hub.</p>
+                </div>
+            </div>
+
+            <!-- SECTION 4: DATA PENGGUNA -->
+            <div id="users-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Daftar Pengguna Terdaftar</h2>
+                    <p>Kelola hak akses dan informasi akun seluruh anggota Litera.</p>
+                </div>
+                <div class="content-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nama Lengkap</th>
+                                <th>Email Akademik</th>
+                                <th>Wilayah</th>
+                                <th>Status Akun</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Reza Eka Putri</strong></td>
+                                <td>reza.putri@litera.app</td>
+                                <td>Makassar (Lokal)</td>
+                                <td><span class="status-badge green">Aktif / Terverifikasi</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION 5: PERBARUI PROFIL ADMIN -->
+            <div id="admin-profile-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Perbarui Profil Administrator</h2>
+                    <p>Ubah kredensial, informasi kontak, dan foto profil admin utama.</p>
+                </div>
+
+                <div class="content-card">
+                    <form class="profile-form" onsubmit="handleAdminProfileSubmit(event)">
+                        <!-- Avatar Change Box -->
+                        <div class="avatar-edit-box">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80" alt="Admin Avatar" class="avatar-preview" id="admin-preview-img">
+                            <div class="avatar-edit-info">
+                                <h4>Foto Profil Admin</h4>
+                                <p>Gunakan foto resmi berukuran maksimal 2MB.</p>
+                                
+                                <input type="file" id="admin-file-input" accept="image/*" style="display: none;" onchange="previewAdminPhoto(event)">
+                                <button type="button" class="btn-secondary-sm" onclick="document.getElementById('admin-file-input').click();">Ganti Foto</button>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-user"></i> Nama Admin</label>
+                                <input type="text" id="admin-name" value="Super Admin" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-envelope"></i> Email Admin</label>
+                                <input type="email" id="admin-email" value="admin@litera.app" required>
+                            </div>
+
+                            <div class="input-group" style="grid-column: span 2;">
+                                <label><i class="fa-solid fa-phone"></i> Nomor Kontak / WhatsApp</label>
+                                <input type="text" id="admin-phone" value="081199887766" required>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                <span>Simpan Perubahan Profil Admin</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- SCRIPT INTERACTIVE -->
+    <script>
+        function showAdminSection(sectionId) {
+            const sections = document.querySelectorAll('.dashboard-section');
+            sections.forEach(sec => sec.classList.remove('active-section'));
+
+            const menuItems = document.querySelectorAll('.sidebar-menu .menu-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+
+            document.getElementById(sectionId).classList.add('active-section');
+            
+            let targetMenuId = 'menu-' + sectionId.replace('-admin', '').replace('-section', '');
+            if (sectionId === 'overview-admin') targetMenuId = 'menu-overview-admin';
+            if (sectionId === 'admin-profile-section') targetMenuId = 'menu-admin-profile';
+            
+            const targetMenu = document.getElementById(targetMenuId);
+            if (targetMenu) targetMenu.classList.add('active');
+        }
+
+        function previewAdminPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('admin-preview-img').src = e.target.result;
+                    document.getElementById('sidebar-admin-avatar').src = e.target.result;
+                    document.getElementById('header-admin-avatar').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleAdminProfileSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('admin-name').value;
+            document.getElementById('sidebar-admin-name').innerText = name;
+            document.getElementById('header-admin-name').innerText = name;
+            alert(`✅ Profil administrator atas nama "${name}" berhasil diperbarui!`);
+        }
+    </script>
+</body>
+</html>

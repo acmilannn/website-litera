@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pengguna - LITERA</title>
+    <!-- CSS Utama Dashboard -->
+    <link rel="stylesheet" href="dashboardpengguna.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- HEADER NAVIGATION -->
+    <header class="site-header">
+        <div class="header-container">
+            <!-- Brand Logo Litera Berupa Gambar -->
+            <div class="brand-logo" onclick="location.href='index.html'" style="cursor: pointer;">
+                <!-- Ganti path di bawah ini sesuai lokasi file logo Anda -->
+                <img src="../foto/logo.jpeg" alt="Logo Litera" style="height: 40px; width: auto; object-fit: contain;">
+                
+                <div class="brand-tagline">
+                    <span class="brand-tagline-title">LITERA</span>
+                    <span class="brand-tagline-sub">Digital Library & Hub</span>
+                </div>
+            </div>
+
+            <!-- Header Profile Info -->
+            <div class="header-user-info">
+                <div class="notification-badge">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="dot"></span>
+                </div>
+                <div class="user-profile-btn" onclick="showSection('profile-section')">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="avatar">
+                    <div class="profile-text">
+                        <span class="username">Reza Eka Putri</span>
+                        <span class="user-role">Mahasiswa Digital Business</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- DASHBOARD CONTAINER -->
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar">
+            <div class="user-card-summary">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="avatar-large">
+                <h4 class="user-name">Reza Eka Putri</h4>
+                <p class="user-email">reza.putri@litera.app</p>
+                <span class="badge-status"><i class="fa-solid fa-circle-check"></i> Terverifikasi</span>
+            </div>
+
+            <nav class="sidebar-menu">
+                <button onclick="showSection('overview-section')" id="menu-overview" class="menu-item active">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Ringkasan Akun</span>
+                </button>
+                <button onclick="showSection('orders-section')" id="menu-orders" class="menu-item">
+                    <i class="fa-solid fa-box"></i>
+                    <span>Pesanan Saya</span>
+                </button>
+                <button onclick="showSection('titip-section')" id="menu-titip" class="menu-item">
+                    <i class="fa-solid fa-hand-holding-hand"></i>
+                    <span>Titip Jual & Barter</span>
+                </button>
+                <button onclick="showSection('profile-section')" id="menu-profile" class="menu-item">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>Perbarui Profil</span>
+                </button>
+                <a href="login.html" class="menu-item logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Keluar (Logout)</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+
+            <!-- SECTION 1: RINGKASAN AKUN -->
+            <div id="overview-section" class="dashboard-section active-section">
+                <div class="section-header">
+                    <h2>Halo, Reza Eka Putri! 👋</h2>
+                    <p>Selamat datang kembali di panel dashboard akun Litera Anda.</p>
+                </div>
+
+                <!-- STATS CARDS GRID -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon red"><i class="fa-solid fa-shopping-bag"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Pesanan</span>
+                            <span class="stat-value">12 Buku</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon dark"><i class="fa-solid fa-book-bookmark"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Buku Dititipkan</span>
+                            <span class="stat-value">4 Unit</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fa-solid fa-wallet"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Saldo Dompet Litera</span>
+                            <span class="stat-value">Rp 185.000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACTIVE SHIPMENT TRACKER -->
+                <div class="content-card">
+                    <div class="card-title-bar">
+                        <h3><i class="fa-solid fa-truck-fast"></i> Pengiriman Aktif (AWB Tracking)</h3>
+                        <span class="badge-tag">Dalam Perjalanan</span>
+                    </div>
+                    <div class="tracking-summary">
+                        <div class="tracking-info">
+                            <p class="invoice-num">No. Invoice: <strong>INV/LITERA/20261028/009</strong></p>
+                            <p class="courier-name">J&T Express (Resi: <strong>JT88920192001</strong>)</p>
+                            <p class="book-title">Buku: <i>Filosofi Teras & Filsafat Sains</i></p>
+                        </div>
+                        <div class="tracking-status">
+                            <div class="status-step active">
+                                <div class="step-icon"><i class="fa-solid fa-check"></i></div>
+                                <span>Dibayar</span>
+                            </div>
+                            <div class="status-line active"></div>
+                            <div class="status-step active">
+                                <div class="step-icon"><i class="fa-solid fa-box-open"></i></div>
+                                <span>Dipacking</span>
+                            </div>
+                            <div class="status-line active"></div>
+                            <div class="status-step active">
+                                <div class="step-icon"><i class="fa-solid fa-truck"></i></div>
+                                <span>Dikirim</span>
+                            </div>
+                            <div class="status-line"></div>
+                            <div class="status-step">
+                                <div class="step-icon"><i class="fa-solid fa-house-chimney"></i></div>
+                                <span>Selesai</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: PESANAN SAYA -->
+            <div id="orders-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Riwayat Pesanan Buku</h2>
+                    <p>Daftar transaksi pembelian buku Anda di Litera.</p>
+                </div>
+                <div class="content-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>No. Invoice</th>
+                                <th>Buku</th>
+                                <th>Tanggal</th>
+                                <th>Total Tagihan</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>INV/LITERA/009</strong></td>
+                                <td>Filosofi Teras, Filsafat Sains</td>
+                                <td>28 Okt 2026</td>
+                                <td class="price">Rp 113.000</td>
+                                <td><span class="status-badge blue">Dalam Kurir</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>INV/LITERA/004</strong></td>
+                                <td>Risalah Kebangkitan</td>
+                                <td>15 Okt 2026</td>
+                                <td class="price">Rp 58.000</td>
+                                <td><span class="status-badge green">Selesai</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION 3: TITIP JUAL & BARTER -->
+            <div id="titip-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Titip Jual & Barter Buku Bekas</h2>
+                    <p>Pantau status stok buku yang sedang Anda titipkan di Litera Hub.</p>
+                </div>
+                <div class="content-card">
+                    <div class="card-title-bar">
+                        <h3>Daftar Buku Dititipkan</h3>
+                        <button class="btn-primary-sm">+ Ajukan Titip Jual</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Judul Buku</th>
+                                <th>Kategori</th>
+                                <th>Harga Jual</th>
+                                <th>Status QC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Namaku Alam - Leila S. Chudori</td>
+                                <td>Fiksi</td>
+                                <td class="price">Rp 65.000</td>
+                                <td><span class="status-badge green">Ready di Hub</span></td>
+                            </tr>
+                            <tr>
+                                <td>Animal Farm - George Orwell</td>
+                                <td>Fiksi</td>
+                                <td class="price">Rp 45.000</td>
+                                <td><span class="status-badge yellow">Verifikasi Fisik</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION 4: PERBARUI PROFIL PENGGUNA -->
+            <div id="profile-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Perbarui Profil Pengguna</h2>
+                    <p>Ubah data diri, nomor kontak, dan alamat pengiriman default Anda.</p>
+                </div>
+
+                <div class="content-card">
+                    <form class="profile-form" onsubmit="handleProfileSubmit(event)">
+                        <!-- Avatar Change Box -->
+                        <!-- Avatar Change Box yang Sudah Interaktif -->
+<div class="avatar-edit-box">
+    <!-- Tambahkan id="avatar-preview-img" agar bisa diubah lewat script -->
+    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="avatar-preview" id="avatar-preview-img">
+    <div class="avatar-edit-info">
+        <h4>Foto Profil Anda</h4>
+        <p>Gunakan foto formal/semi-formal berukuran maksimal 2MB.</p>
+        
+        <!-- Input file tersembunyi untuk mengambil gambar dari komputer -->
+        <input type="file" id="hidden-file-input" accept="image/*" style="display: none;" onchange="previewProfilePhoto(event)">
+        
+        <!-- Tombol yang memicu klik ke input file tersembunyi -->
+        <button type="button" class="btn-secondary-sm" onclick="document.getElementById('hidden-file-input').click();">Ganti Foto</button>
+    </div>
+</div>
+
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-user"></i> Nama Lengkap</label>
+                                <input type="text" id="prof-name" value="Reza Eka Putri" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-envelope"></i> Email Akademik / Utama</label>
+                                <input type="email" id="prof-email" value="reza.putri@litera.app" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-phone"></i> Nomor WhatsApp</label>
+                                <input type="text" id="prof-phone" value="08123456789" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-map-location-dot"></i> Wilayah Utama</label>
+                                <select id="prof-region" class="form-select">
+                                    <option value="Makassar" selected>Kota Makassar (Lokal)</option>
+                                    <option value="Gowa">Kabupaten Gowa</option>
+                                    <option value="Maros">Kabupaten Maros</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group full-width">
+                                <label><i class="fa-solid fa-house"></i> Alamat Lengkap Pengiriman</label>
+                                <textarea id="prof-address" rows="3" required>Jl. Tamalanrea Indah No. 12, Antang, Makassar</textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                <span>Simpan Perubahan Profil</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- JAVASCRIPT SWITCHER -->
+    <script>
+        function showSection(sectionId) {
+            // Sembunyikan semua seksi
+            const sections = document.querySelectorAll('.dashboard-section');
+            sections.forEach(sec => sec.classList.remove('active-section'));
+
+            // Nonaktifkan semua menu sidebar
+            const menuItems = document.querySelectorAll('.sidebar-menu .menu-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+
+            // Tampilkan seksi terpilih
+            document.getElementById(sectionId).classList.add('active-section');
+
+            // Aktifkan menu sidebar yang diklik
+            const targetMenuId = 'menu-' + sectionId.replace('-section', '');
+            const targetMenu = document.getElementById(targetMenuId);
+            if (targetMenu) targetMenu.classList.add('active');
+        }
+
+        function handleProfileSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('prof-name').value;
+            alert(`✅ Profil pengguna atas nama "${name}" berhasil diperbarui!`);
+        }
+    </script>
+    
+        <SCRIPT>
+        function previewProfilePhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Mengubah gambar preview profil secara langsung saat file dipilih
+                    document.getElementById('avatar-preview-img').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+        </script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. Ambil data user yang login dari localStorage
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (!user) {
+      // Jika tidak ada data login, kembalikan ke halaman login
+      alert('Silakan login terlebih dahulu!');
+      window.location.href = '../login/index.html';
+    } else {
+      // 2. Cari semua elemen yang menampilkan nama pengguna dan ubah nilainya
+      
+      // Mengubah teks sapaan utama "Halo, [Nama]!"
+      const welcomeHeading = document.querySelector('.main-content h2, .section-header h2, .welcome-text');
+      if (welcomeHeading && welcomeHeading.textContent.includes('Halo')) {
+        welcomeHeading.textContent = `Halo, ${user.nama}!`;
+      }
+
+      // Mengubah nama di profil sidebar kiri
+      const sidebarName = document.querySelector('.user-card-summary .user-name, .profile-card h3, .profile-card .user-name');
+      if (sidebarName) {
+        sidebarName.textContent = user.nama;
+      }
+
+      // Mengubah nama di header kanan atas
+      const headerName = document.querySelector('.header-user-info .username, .user-profile-btn .username, .profile-text .username');
+      if (headerName) {
+        headerName.textContent = user.nama;
+      }
+
+      // Mengubah email jika ada elemen email
+      const userEmail = document.querySelector('.user-email');
+      if (userEmail && user.email) {
+        userEmail.textContent = user.email;
+      }
+    }
+  });
+</script>
+</script>
+</body>
+</html>
