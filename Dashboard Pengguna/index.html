@@ -16,7 +16,6 @@
         <div class="header-container">
             <!-- Brand Logo Litera Berupa Gambar -->
             <div class="brand-logo" onclick="location.href='index.html'" style="cursor: pointer;">
-                <!-- Ganti path di bawah ini sesuai lokasi file logo Anda -->
                 <img src="../foto/logo.jpeg" alt="Logo Litera" style="height: 40px; width: auto; object-fit: contain;">
                 
                 <div class="brand-tagline">
@@ -32,7 +31,8 @@
                     <span class="dot"></span>
                 </div>
                 <div class="user-profile-btn" onclick="showSection('profile-section')">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="avatar">
+                    <!-- Tambahkan id="header-avatar-img" -->
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="avatar" id="header-avatar-img">
                     <div class="profile-text">
                         <span class="username">Reza Eka Putri</span>
                         <span class="user-role">Mahasiswa Digital Business</span>
@@ -48,7 +48,8 @@
         <!-- SIDEBAR NAVIGATION -->
         <aside class="sidebar">
             <div class="user-card-summary">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="avatar-large">
+                <!-- Tambahkan id="sidebar-avatar-img" -->
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="avatar-large" id="sidebar-avatar-img">
                 <h4 class="user-name">Reza Eka Putri</h4>
                 <p class="user-email">reza.putri@litera.app</p>
                 <span class="badge-status"><i class="fa-solid fa-circle-check"></i> Terverifikasi</span>
@@ -71,7 +72,7 @@
                     <i class="fa-solid fa-user-gear"></i>
                     <span>Perbarui Profil</span>
                 </button>
-                <a href="login.html" class="menu-item logout-btn">
+                <a href="/login/index.html" class="menu-item logout-btn">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Keluar (Logout)</span>
                 </a>
@@ -84,7 +85,7 @@
             <!-- SECTION 1: RINGKASAN AKUN -->
             <div id="overview-section" class="dashboard-section active-section">
                 <div class="section-header">
-                    <h2>Halo, Reza Eka Putri! 👋</h2>
+                    <h2 id="welcome-title">Halo, Reza Eka Putri! 👋</h2>
                     <p>Selamat datang kembali di panel dashboard akun Litera Anda.</p>
                 </div>
 
@@ -235,21 +236,16 @@
                 <div class="content-card">
                     <form class="profile-form" onsubmit="handleProfileSubmit(event)">
                         <!-- Avatar Change Box -->
-                        <!-- Avatar Change Box yang Sudah Interaktif -->
-<div class="avatar-edit-box">
-    <!-- Tambahkan id="avatar-preview-img" agar bisa diubah lewat script -->
-    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="avatar-preview" id="avatar-preview-img">
-    <div class="avatar-edit-info">
-        <h4>Foto Profil Anda</h4>
-        <p>Gunakan foto formal/semi-formal berukuran maksimal 2MB.</p>
-        
-        <!-- Input file tersembunyi untuk mengambil gambar dari komputer -->
-        <input type="file" id="hidden-file-input" accept="image/*" style="display: none;" onchange="previewProfilePhoto(event)">
-        
-        <!-- Tombol yang memicu klik ke input file tersembunyi -->
-        <button type="button" class="btn-secondary-sm" onclick="document.getElementById('hidden-file-input').click();">Ganti Foto</button>
-    </div>
-</div>
+                        <div class="avatar-edit-box">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="avatar-preview" id="avatar-preview-img">
+                            <div class="avatar-edit-info">
+                                <h4>Foto Profil Anda</h4>
+                                <p>Gunakan foto formal/semi-formal berukuran maksimal 2MB.</p>
+                                
+                                <input type="file" id="hidden-file-input" accept="image/*" style="display: none;" onchange="previewProfilePhoto(event)">
+                                <button type="button" class="btn-secondary-sm" onclick="document.getElementById('hidden-file-input').click();">Ganti Foto</button>
+                            </div>
+                        </div>
 
                         <div class="form-grid">
                             <div class="input-group">
@@ -295,84 +291,108 @@
         </main>
     </div>
 
-    <!-- JAVASCRIPT SWITCHER -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
+        // Navigasi Tab Sidebar
         function showSection(sectionId) {
-            // Sembunyikan semua seksi
             const sections = document.querySelectorAll('.dashboard-section');
             sections.forEach(sec => sec.classList.remove('active-section'));
 
-            // Nonaktifkan semua menu sidebar
             const menuItems = document.querySelectorAll('.sidebar-menu .menu-item');
             menuItems.forEach(item => item.classList.remove('active'));
 
-            // Tampilkan seksi terpilih
             document.getElementById(sectionId).classList.add('active-section');
 
-            // Aktifkan menu sidebar yang diklik
             const targetMenuId = 'menu-' + sectionId.replace('-section', '');
             const targetMenu = document.getElementById(targetMenuId);
             if (targetMenu) targetMenu.classList.add('active');
         }
 
-        function handleProfileSubmit(e) {
-            e.preventDefault();
-            const name = document.getElementById('prof-name').value;
-            alert(`✅ Profil pengguna atas nama "${name}" berhasil diperbarui!`);
-        }
-    </script>
-    
-        <SCRIPT>
+        // Preview Foto Saat Dipilih
+        let tempNewAvatar = null;
         function previewProfilePhoto(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    // Mengubah gambar preview profil secara langsung saat file dipilih
-                    document.getElementById('avatar-preview-img').src = e.target.result;
+                    tempNewAvatar = e.target.result;
+                    document.getElementById('avatar-preview-img').src = tempNewAvatar;
                 }
                 reader.readAsDataURL(file);
             }
         }
-        </script>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // 1. Ambil data user yang login dari localStorage
-    const user = JSON.parse(localStorage.getItem('user'));
 
-    if (!user) {
-      // Jika tidak ada data login, kembalikan ke halaman login
-      alert('Silakan login terlebih dahulu!');
-      window.location.href = '../login/index.html';
-    } else {
-      // 2. Cari semua elemen yang menampilkan nama pengguna dan ubah nilainya
-      
-      // Mengubah teks sapaan utama "Halo, [Nama]!"
-      const welcomeHeading = document.querySelector('.main-content h2, .section-header h2, .welcome-text');
-      if (welcomeHeading && welcomeHeading.textContent.includes('Halo')) {
-        welcomeHeading.textContent = `Halo, ${user.nama}!`;
-      }
+        // Simpan Perubahan Profil (Memperbarui Tampilan & localStorage)
+        function handleProfileSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('prof-name').value;
+            const email = document.getElementById('prof-email').value;
 
-      // Mengubah nama di profil sidebar kiri
-      const sidebarName = document.querySelector('.user-card-summary .user-name, .profile-card h3, .profile-card .user-name');
-      if (sidebarName) {
-        sidebarName.textContent = user.nama;
-      }
+            // 1. Update Tampilan Seketika di Halaman (Header & Sidebar)
+            const headerNameEl = document.querySelector('.header-user-info .username');
+            if (headerNameEl) headerNameEl.textContent = name;
 
-      // Mengubah nama di header kanan atas
-      const headerName = document.querySelector('.header-user-info .username, .user-profile-btn .username, .profile-text .username');
-      if (headerName) {
-        headerName.textContent = user.nama;
-      }
+            const sidebarNameEl = document.querySelector('.user-card-summary .user-name');
+            if (sidebarNameEl) sidebarNameEl.textContent = name;
 
-      // Mengubah email jika ada elemen email
-      const userEmail = document.querySelector('.user-email');
-      if (userEmail && user.email) {
-        userEmail.textContent = user.email;
-      }
-    }
-  });
-</script>
-</script>
+            const sidebarEmailEl = document.querySelector('.user-card-summary .user-email');
+            if (sidebarEmailEl) sidebarEmailEl.textContent = email;
+
+            const welcomeTitleEl = document.getElementById('welcome-title');
+            if (welcomeTitleEl) welcomeTitleEl.textContent = `Halo, ${name}! 👋`;
+
+            if (tempNewAvatar) {
+                document.getElementById('avatar-preview-img').src = tempNewAvatar;
+                document.getElementById('sidebar-avatar-img').src = tempNewAvatar;
+                document.getElementById('header-avatar-img').src = tempNewAvatar;
+            }
+
+            // 2. Simpan Pembaruan ke localStorage
+            let user = JSON.parse(localStorage.getItem('user')) || {};
+            user.nama = name;
+            user.email = email;
+            if (tempNewAvatar) {
+                user.avatar = tempNewAvatar;
+            }
+            localStorage.setItem('user', JSON.stringify(user));
+
+            alert(`✅ Profil pengguna atas nama "${name}" berhasil diperbarui!`);
+        }
+
+        // Load Data dari localStorage Saat Halaman Dibuka
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+
+            if (!user) {
+                alert('Silakan login terlebih dahulu!');
+                window.location.href = '../login/index.html';
+            } else {
+                // Isi form input profil dengan data dari localStorage
+                if (user.nama) {
+                    document.getElementById('prof-name').value = user.nama;
+                    const welcomeHeading = document.getElementById('welcome-title');
+                    if (welcomeHeading) welcomeHeading.textContent = `Halo, ${user.nama}! 👋`;
+
+                    const sidebarName = document.querySelector('.user-card-summary .user-name');
+                    if (sidebarName) sidebarName.textContent = user.nama;
+
+                    const headerName = document.querySelector('.header-user-info .username');
+                    if (headerName) headerName.textContent = user.nama;
+                }
+
+                if (user.email) {
+                    document.getElementById('prof-email').value = user.email;
+                    const userEmail = document.querySelector('.user-card-summary .user-email');
+                    if (userEmail) userEmail.textContent = user.email;
+                }
+
+                if (user.avatar) {
+                    document.getElementById('avatar-preview-img').src = user.avatar;
+                    document.getElementById('sidebar-avatar-img').src = user.avatar;
+                    document.getElementById('header-avatar-img').src = user.avatar;
+                }
+            }
+        });
+    </script>
 </body>
 </html>
