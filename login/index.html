@@ -25,7 +25,7 @@
                 <p>Masuk untuk melanjutkan perjalanan literasi Anda di Litera</p>
             </div>
 
-            <!-- Form Login (onsubmit inline telah dihapus) -->
+            <!-- Form Login -->
             <form class="auth-form" id="form-login">
                 
                 <div class="input-group">
@@ -33,10 +33,10 @@
                     <input type="email" id="login-email" placeholder="Email Akademik / Pribadi" required>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group password-group">
                     <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
                     <input type="password" id="login-password" placeholder="Kata Sandi" required>
-                    <span class="password-toggle"><i class="fa-solid fa-eye-slash"></i></span>
+                    <span class="password-toggle" id="togglePassword"><i class="fa-solid fa-eye-slash"></i></span>
                 </div>
 
                 <div class="options-group">
@@ -78,7 +78,7 @@
     </div>
 
 <script>
-  // LANGKAH 3: LOGIKA LOGIN SCRIPT SESUAI ROLE (ADMIN / USER)
+  // 1. LOGIKA LOGIN SCRIPT & PERUTEAN KELUSURAN DENGAN LOCALSTORAGE
   const loginForm = document.getElementById('form-login');
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
@@ -97,21 +97,49 @@
         const result = await response.json();
 
         if (result.success) {
-          // Simpan data user di localStorage browser
-          localStorage.setItem('user', JSON.stringify(result.user));
-          alert(`Selamat datang, ${result.user.nama}!`);
+          // Ambil data profil lama jika ada (untuk mempertahankan avatar / custom role)
+          const existingUser = JSON.parse(localStorage.getItem('user')) || {};
+          
+          // Gabungkan data backend dengan data profil lokal
+          const userData = {
+            ...existingUser,
+            ...result.user
+          };
 
-          // PERUTEAN/REDIRECT BERDASARKAN ROLE
-          if (result.user.role === 'admin') {
+          // Simpan data lengkap ke localStorage
+          localStorage.setItem('user', JSON.stringify(userData));
+
+          alert(`Selamat datang kembali, ${userData.nama}!`);
+
+          // PERUTEAN BERDASARKAN ROLE
+          if (userData.role === 'admin') {
             window.location.href = '../Dashboard Admin/index.html';
           } else {
-            window.location.href = '../Dashboard Pengguna/index.html';
+            // Langsung diarahkan ke Katalog Utama (index.html root)
+            window.location.href = '../Katalog/index.html';
           }
         } else {
-          alert(result.message);
+          alert(result.message || 'Login gagal, periksa email dan kata sandi Anda!');
         }
       } catch (err) {
         alert('Gagal terhubung ke server backend! Pastikan node server.js sudah berjalan.');
+      }
+    });
+  }
+
+  // 2. LOGIKA TOGGLE IKON MATA KATA SANDI
+  const passwordInput = document.getElementById('login-password');
+  const togglePasswordBtn = document.getElementById('togglePassword');
+
+  if (togglePasswordBtn && passwordInput) {
+    togglePasswordBtn.addEventListener('click', function () {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+
+      const icon = this.querySelector('i');
+      if (icon) {
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
       }
     });
   }

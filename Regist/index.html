@@ -28,7 +28,7 @@
                 <p>Mulai perjalanan hemat kuliah & barter buku bekas Anda</p>
             </div>
 
-            <!-- Form Registrasi (onsubmit inline telah dihapus) -->
+            <!-- Form Registrasi -->
             <form class="auth-form" id="form-register">
                 
                 <div class="input-group">
@@ -41,10 +41,11 @@
                     <input type="email" id="reg-email" placeholder="Email Akademik / Pribadi" required>
                 </div>
 
-                <div class="input-group password-group">
-                    <i class="fa-solid fa-lock input-icon-left"></i>
+                <!-- Bagian Password disamakan persis seperti halaman Login -->
+                <div class="input-group">
+                    <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
                     <input type="password" id="reg-password" placeholder="Kata Sandi" required>
-                    <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
+                    <span class="password-toggle" id="togglePassword"><i class="fa-solid fa-eye-slash"></i></span>
                 </div>
 
                 <div class="terms-group">
@@ -111,6 +112,23 @@
         }
       } catch (err) {
         alert('Gagal terhubung ke server backend! Pastikan node server.js sudah berjalan.');
+      }
+    });
+  }
+
+  // Logika toggle ikon mata disamakan persis seperti pada login
+  const passwordInput = document.getElementById('reg-password');
+  const togglePasswordBtn = document.getElementById('togglePassword');
+
+  if (togglePasswordBtn && passwordInput) {
+    togglePasswordBtn.addEventListener('click', function () {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+
+      const icon = this.querySelector('i');
+      if (icon) {
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
       }
     });
   }

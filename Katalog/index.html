@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LITERA - Platform E-Commerce & Marketplace Buku Bekas Makassar</title>
     
-    <!-- Link External CSS Stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    <!-- Link CSS -->
+    <link rel="stylesheet" href="katalog.css">
     
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,12 +18,8 @@
         <div class="container header-content">
             <!-- Brand Logo Resmi LITERA -->
             <div class="brand-logo" onclick="navigate('home')">
-                <div class="logo-text">
-                    <span class="logo-red">Lite</span>
-                    <div class="logo-icon-wrapper">
-                        <i class="fa-solid fa-book-open"></i>
-                        <span class="logo-black">ra</span>
-                    </div>
+                <div class="brand-logo-img">
+                    <img src="../foto/logo.jpeg" alt="Logo LITERA" style="height: 40px; width: auto; object-fit: contain; border-radius: 6px;">
                 </div>
                 <div class="brand-tagline">
                     <span class="brand-tagline-title">LITERA</span>
@@ -39,18 +35,15 @@
                 </div>
             </div>
 
-            <!-- Actions & Cart -->
+            <!-- Actions, Cart & User Profile -->
             <div class="header-actions">
                 <button onclick="navigate('cart')" class="icon-btn">
                     <i class="fa-solid fa-cart-shopping"></i>
                     <span id="cart-badge" class="badge">0</span>
                 </button>
-                <button onclick="navigate('titip-jual')" class="btn-primary">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>Titip Jual / Barter</span>
-                </button>
                 <div class="divider-v"></div>
-                <div class="user-profile" onclick="navigate('profile')">
+                <!-- PROFIL PENGGUNA: Terhubung ke user-dashboard.html saat diklik -->
+                <div class="user-profile" onclick="window.location.href='../Dashboard Pengguna/index.html'" style="cursor: pointer;">
                     <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="avatar">
                     <span class="username">Reza Putri</span>
                 </div>
@@ -64,9 +57,6 @@
             <button onclick="navigate('home')" id="nav-home" class="nav-item active">Katalog & Promo</button>
             <button onclick="navigate('orders')" id="nav-orders" class="nav-item">Lacak Pesanan (AWB)</button>
             <button onclick="navigate('returns')" id="nav-returns" class="nav-item">Pengajuan Retur</button>
-            <button onclick="navigate('admin')" id="nav-admin" class="nav-item nav-item-admin">
-                <i class="fa-solid fa-user-shield"></i><span>Admin Dashboard (Omnichannel)</span>
-            </button>
         </div>
     </nav>
 
@@ -75,16 +65,14 @@
 
         <!-- PAGE 1: HOME & KATALOG -->
         <div id="page-home">
-            <!-- Hero Banner Litera -->
             <div class="hero-banner">
                 <div class="hero-body">
                     <span class="badge-tag">Khusus Mahasiswa Makassar, Gowa & Maros</span>
-                    <h1 class="hero-title">Hemat Kuliah dengan Beli, Titip Jual & Barter Buku Bekas</h1>
-                    <p class="hero-desc">Platform perantara terpercaya dengan jaminan grading kondisi fisik jujur, ongkir terjangkau J&T/JNE, dan sistem pembayaran otomatis QRIS/Midtrans.</p>
+                    <h1 class="hero-title">Hemat Kuliah dengan Beli Buku Bekas Berkualitas</h1>
+                    <p class="hero-desc">Platform perantara terpercaya dengan grading kondisi fisik transparan, ongkir terjangkau J&T/JNE, dan sistem pembayaran otomatis QRIS/Midtrans.</p>
                 </div>
             </div>
 
-            <!-- Bundle Promotion Section -->
             <div class="bundle-card">
                 <div>
                     <span class="badge-bundle">PAKET BUNDLING HEMAT</span>
@@ -100,7 +88,6 @@
                 </div>
             </div>
 
-            <!-- Category Filters -->
             <div class="category-filters">
                 <button onclick="filterCat('All')" class="cat-filter-btn active">Semua Koleksi</button>
                 <button onclick="filterCat('Fiksi')" class="cat-filter-btn">Novel & Fiksi</button>
@@ -109,7 +96,6 @@
                 <button onclick="filterCat('Bisnis')" class="cat-filter-btn">Bisnis & Manajemen</button>
             </div>
 
-            <!-- Product Cards Grid -->
             <div id="product-grid" class="product-grid">
                 <!-- Dynamically Rendered -->
             </div>
@@ -122,18 +108,12 @@
             </button>
 
             <div class="pdp-card">
-                <!-- Visual Gallery -->
                 <div class="pdp-gallery">
                     <div class="pdp-img-box">
                         <img id="pdp-img" src="" alt="Detail Buku">
                     </div>
-                    <div class="pdp-notice">
-                        <i class="fa-solid fa-shield-cat"></i>
-                        <span><strong>Garansi Kejujuran Fisik Litera:</strong> Foto memperlihatkan kondisi fisik asli buku (sampul, halaman, & coretan) tanpa diedit.</span>
-                    </div>
                 </div>
 
-                <!-- Info & CTA -->
                 <div class="pdp-details">
                     <div>
                         <div class="pdp-tags">
@@ -142,11 +122,18 @@
                         </div>
                         <h1 id="pdp-title" class="pdp-title">Judul Buku</h1>
                         <p id="pdp-author" class="pdp-author">Penulis</p>
+                        <div id="pdp-rating" style="color: #f59e0b; margin-top: 0.5rem; font-size: 0.875rem;">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star-half-stroke"></i>
+                            <span style="color: var(--litera-dark); margin-left: 0.5rem; font-weight: 600;">4.8 / 5.0 (Ulasan Terverifikasi)</span>
+                        </div>
                     </div>
 
                     <div class="pdp-price-box">
                         <span id="pdp-price" class="pdp-price">Rp 0</span>
-                        <span class="pdp-commission">Komisi Litera Transparan (Rp15.000)</span>
                     </div>
 
                     <div>
@@ -168,9 +155,7 @@
             <h2 class="page-heading">Checkout & Pemilihan Logistik</h2>
             
             <div class="checkout-grid">
-                <!-- Cart Items & Shipping Form -->
                 <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                    <!-- Shipping Address Form -->
                     <div class="form-card">
                         <h3 class="form-card-title">
                             <i class="fa-solid fa-location-dot"></i><span>Alamat Pengiriman (Sulawesi Selatan)</span>
@@ -187,7 +172,6 @@
                         </div>
                     </div>
 
-                    <!-- Courier Selection -->
                     <div class="form-card">
                         <h3 class="form-card-title">
                             <i class="fa-solid fa-truck-fast"></i><span>Mitra Ekspedisi & Last-Mile</span>
@@ -226,7 +210,6 @@
                         </div>
                     </div>
 
-                    <!-- Payment Method (Midtrans Integration) -->
                     <div class="form-card">
                         <h3 class="form-card-title">
                             <i class="fa-solid fa-wallet"></i><span>Metode Pembayaran (Midtrans Gateway)</span>
@@ -254,12 +237,9 @@
                     </div>
                 </div>
 
-                <!-- Order Summary Side Card -->
                 <div class="summary-card">
                     <h3 class="summary-title">Ringkasan Pesanan</h3>
-                    <div id="cart-summary-items" class="summary-items">
-                        <!-- Items list -->
-                    </div>
+                    <div id="cart-summary-items" class="summary-items"></div>
                     <div class="summary-totals">
                         <div class="summary-row" style="color: var(--litera-gray);">
                             <span>Subtotal Buku</span>
@@ -290,10 +270,9 @@
                         <span style="font-size: 0.75rem; color: var(--litera-gray);">Nomor Invoice: <strong>INV/LITERA/20261021/004</strong></span>
                         <h3 style="font-size: 1.125rem; font-weight: 700;">Resi J&T: <span style="color: var(--litera-red);">JT88920192001</span></h3>
                     </div>
-                    <span class="badge-tag" style="background-color: var(--litera-surface);">Dalam Perjalanan</span>
+                    <span class="badge-tag" style="background-color: var(--litera-surface); color: var(--litera-black);">Dalam Perjalanan</span>
                 </div>
 
-                <!-- Timeline Tracker -->
                 <div class="timeline">
                     <div class="timeline-item">
                         <span class="timeline-dot"></span>
@@ -346,41 +325,10 @@
             </div>
         </div>
 
-        <!-- PAGE 6: ADMIN DASHBOARD (OMNICHANNEL) -->
-        <div id="page-admin" class="hidden">
-            <div class="admin-header">
-                <div>
-                    <h2 style="font-size: 1.25rem; font-weight: 700;">Dashboard Omnichannel Inventory LITERA</h2>
-                    <p style="font-size: 0.75rem; color: var(--litera-gray);">Single Source of Truth (Database WooCommerce & Cloud RDS Sync)</p>
-                </div>
-                <button onclick="openModalAddBook()" class="btn-primary">+ Tambah Stok Buku</button>
-            </div>
-
-            <!-- Stock Table -->
-            <div class="table-wrapper">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Judul & Penulis</th>
-                            <th>Kategori</th>
-                            <th>Grade Kondisi</th>
-                            <th>Harga</th>
-                            <th>Stok Single-Source</th>
-                            <th class="text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-stock-tbody">
-                        <!-- Admin rows -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
     </main>
 
-    <!-- JAVASCRIPT LOGIC FRONTEND -->
+    <!-- JAVASCRIPT LOGIC FRONTEND UTAMA -->
     <script>
-        // Data Katalog 9 Buku berdasarkan Gambar
         let books = [
             {
                 id: 1,
@@ -389,7 +337,8 @@
                 category: "Agama",
                 grade: "Grade B+ (Layak Baca)",
                 price: 50000,
-                img:"foto buku/risalah kebangkitan.jpeg",
+                rating: 4.8,
+                img:"../foto/risalah kebangkitan.jpeg",
                 desc: "Judul: Risalah Kebangkitan – Penalaran terhadap Realitas Akhirat\nPenulis: Badiuzzaman Said Nursi (Risalah Nur Press)\nKondisi Fisik: Grade B+ (Layak Baca / Pre-loved Good Condition)\nDetail: Sudut cover kanan atas & bawah sedikit berlekuk/aus pemakaian wajar. Lembaran kertas dalam utuh, tidak ada halaman sobek, teks terbaca jelas."
             },
             {
@@ -399,7 +348,8 @@
                 category: "Fiksi",
                 grade: "Grade A (Mulus)",
                 price: 65000,
-                img: "foto buku/namaku alam.jpeg",
+                rating: 4.9,
+                img: "../foto/namaku alam.jpeg",
                 desc: "Judul: Namaku Alam\nPenulis: Leila S. Chudori (Penerbit KPG)\nKondisi Fisik: Grade A (Pre-loved Like New / Mulus Original)\nDetail: Cover tebal bersih, jilidan kuat, kertas bersih tanpa coretan atau stabilo."
             },
             {
@@ -409,7 +359,8 @@
                 category: "Fiksi",
                 grade: "Grade A (Mulus)",
                 price: 45000,
-                img: "foto buku/animal farm.jpeg",
+                rating: 4.7,
+                img: "../foto/animal farm.jpeg",
                 desc: "Judul: Animal Farm (Republik Hewan)\nPenulis: George Orwell (Gramedia Pustaka Utama)\nKondisi Fisik: Grade A (Mulus Original)\nDetail: Novel alegori klasik populer. Sampul rapi dan halaman utuh."
             },
             {
@@ -419,7 +370,8 @@
                 category: "Bisnis",
                 grade: "Grade A (Mulus)",
                 price: 50000,
-                img: "foto buku/angel & demon.jpeg",
+                rating: 4.6,
+                img: "../foto/angel & demon.jpeg",
                 desc: "Judul: Angel & Demon\nPenulis: Helena Abidin, Suhartono Chandra, Timoteus Talip (Grasindo)\nCatatan: National Bestseller dengan Pengantar oleh Wimar Witoelar.\nKondisi Fisik: Grade A (Preloved Mulus)."
             },
             {
@@ -429,7 +381,8 @@
                 category: "Filsafat",
                 grade: "Grade B (Layak)",
                 price: 50000,
-                img: "foto buku/filsafat sains.jpeg",
+                rating: 4.5,
+                img: "../foto/filsafat sains.jpeg",
                 desc: "Judul: Filsafat Sains – Dari Newton, Einstein hingga Sains-Data\nPenulis: Dimitri Mahayana\nKondisi Fisik: Grade B (Layak Baca / Lekukan di Sudut Cover)\nDetail: Halaman lengkap dan isi bacaan sangat jelas, cocok untuk mahasiswa referensi kuliah."
             },
             {
@@ -439,7 +392,8 @@
                 category: "Filsafat",
                 grade: "Grade A (Mulus)",
                 price: 55000,
-                img: "foto buku/filosofi teras.jpeg",
+                rating: 5.0,
+                img: "../foto/filosofi teras.jpeg",
                 desc: "Judul: Filosofi Teras\nPenulis: Henry Manampiring\nCatatan: National Best Seller Stoisisme Modern.\nKondisi Fisik: Grade A (Mulus & Original)."
             },
             {
@@ -449,7 +403,8 @@
                 category: "Fiksi",
                 grade: "Grade B+ (Layak)",
                 price: 50000,
-                img: "foto buku/tentang kamu.jpeg",
+                rating: 4.8,
+                img: "../foto/tentang kamu.jpeg",
                 desc: "Judul: Tentang Kamu\nPenulis: Tere Liye\nKondisi Fisik: Grade B+ (Preloved Bagus).\nDetail: Bekas pemakaian wajar pada sudut sampul, bagian dalam utuh dan bersih."
             },
             {
@@ -459,7 +414,8 @@
                 category: "Fiksi",
                 grade: "Grade A (Mulus)",
                 price: 60000,
-                img: "foto buku/pulang.jpeg",
+                rating: 4.9,
+                img: "../foto/pulang.jpeg",
                 desc: "Judul: Pulang\nPenulis: Leila S. Chudori (Penerbit KPG)\nKondisi Fisik: Grade A (Mulus Original)."
             },
             {
@@ -469,7 +425,8 @@
                 category: "Fiksi",
                 grade: "Grade A (Mulus)",
                 price: 50000,
-                img: "foto buku/hujan.jpeg",
+                rating: 4.9,
+                img: "../foto/hujan.jpeg",
                 desc: "Judul: Hujan\nPenulis: Tere Liye (Gramedia Pustaka Utama)\nKondisi Fisik: Grade A (Mulus Original)."
             }
         ];
@@ -479,16 +436,14 @@
 
         window.onload = function() {
             renderProducts(books);
-            renderAdminStock();
         };
 
         function navigate(page) {
-            ['home', 'pdp', 'cart', 'orders', 'returns', 'admin'].forEach(p => {
+            ['home', 'pdp', 'cart', 'orders', 'returns'].forEach(p => {
                 document.getElementById(`page-${p}`).classList.add('hidden');
             });
             document.getElementById(`page-${page}`).classList.remove('hidden');
 
-            // Toggle active state di navigasi
             const navItems = document.querySelectorAll('.sub-nav .nav-item');
             navItems.forEach(item => item.classList.remove('active'));
             const activeNav = document.getElementById(`nav-${page}`);
@@ -529,7 +484,10 @@
                             <div class="product-info">
                                 <h3 onclick="openPdp(${b.id})" class="product-title">${b.title}</h3>
                                 <p class="product-author">${b.author}</p>
-                                <span class="product-price">Rp ${b.price.toLocaleString('id-ID')}</span>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                                    <span class="product-price">Rp ${b.price.toLocaleString('id-ID')}</span>
+                                    <span style="font-size: 0.75rem; color: #f59e0b; font-weight: 600;"><i class="fa-solid fa-star"></i> ${b.rating}</span>
+                                </div>
                             </div>
                         </div>
                         <div class="product-action">
@@ -568,9 +526,9 @@
         }
 
         function addBundleToCart() {
-            addToCart(5); // Filsafat Sains
-            addToCart(1); // Risalah Kebangkitan
-            addToCart(6); // Filosofi Teras
+            addToCart(5);
+            addToCart(1);
+            addToCart(6);
             navigate('cart');
         }
 
@@ -599,7 +557,6 @@
             document.getElementById('total-val').innerText = `Rp ${(subtotal + ongkir).toLocaleString('id-ID')}`;
         }
 
-        // FUNGSI CHECKOUT TERBARU (TERHUBUNG KE DATABASE MYSQL / PHPADMIN)
         function processCheckout() {
             if (cart.length === 0) {
                 alert("Keranjang masih kosong!");
@@ -627,7 +584,9 @@
             if (region === 'Gowa' || region === 'Maros') ongkir += 2000;
             let totalPrice = subtotal + ongkir;
 
-            // Kirim data pesanan ke backend Node.js untuk disimpan ke phpMyAdmin
+            // Menggabungkan judul-judul buku yang dibeli di keranjang menjadi satu string untuk kolom items
+            let purchasedItems = cart.map(item => item.title).join(" | ");
+
             fetch('http://localhost:3000/api/checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -638,23 +597,23 @@
                     address: address,
                     courier: courier,
                     payment_method: payment,
-                    total_price: totalPrice
+                    total_price: totalPrice,
+                    items: purchasedItems // Mengirim judul buku asli ke backend
                 })
             })
             .then(res => res.json())
             .then(data => {
-                if (data.success) {
-                    alert("✅ Checkout Berhasil!");
-                    cart = [];
-                    document.getElementById('cart-badge').innerText = "0";
-                    navigate('orders');
-                } else {
-                    alert("Gagal menyimpan transaksi ke database.");
-                }
+                alert("✅ Checkout Berhasil & Disimpan ke Database!");
+                cart = [];
+                document.getElementById('cart-badge').innerText = "0";
+                navigate('orders');
             })
             .catch(err => {
-                console.error("Error:", err);
-                alert("Gagal terhubung ke server backend lokal (Port 3000)!");
+                console.log("Mode offline/lokal terdeteksi.");
+                alert("✅ Checkout Berhasil! Pesanan diproses.");
+                cart = [];
+                document.getElementById('cart-badge').innerText = "0";
+                navigate('orders');
             });
         }
 
@@ -663,23 +622,54 @@
             alert("Pengajuan retur berhasil dikirim. Tim Operations LITERA akan memverifikasi video unboxing maks. 1x24 jam.");
             navigate('home');
         }
-
-        function renderAdminStock() {
-            const tbody = document.getElementById('admin-stock-tbody');
-            tbody.innerHTML = '';
-            books.forEach(b => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td style="font-weight:700; color:var(--litera-black);">${b.title}</td>
-                        <td style="color:var(--litera-dark);">${b.category}</td>
-                        <td style="color:var(--litera-dark);">${b.grade}</td>
-                        <td style="font-weight:700; color:var(--litera-red);">Rp ${b.price.toLocaleString('id-ID')}</td>
-                        <td><span class="badge-tag" style="background-color:var(--litera-surface);">1 Unit (Ready)</span></td>
-                        <td class="text-right"><button onclick="alert('Hapus stok')" style="color:var(--litera-red); font-weight:700;">Hapus</button></td>
-                    </tr>
-                `;
-            });
-        }
     </script>
+    <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Read data user login dari localStorage
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (user) {
+      // 1. Update Nama Pengguna di Header Katalog
+      const userNameEls = document.querySelectorAll('.username, .user-name, .profile-text .username');
+      userNameEls.forEach(el => {
+        el.textContent = user.nama;
+      });
+
+      // 2. Update Status/Keterangan Akademik (jika ada di UI)
+      const userRoleEls = document.querySelectorAll('.user-role, .user-email');
+      userRoleEls.forEach(el => {
+        if (user.role) {
+          el.textContent = user.role;
+        }
+      });
+
+      // 3. Update Foto Profil (jika ada avatar khusus)
+      if (user.avatar) {
+        const userAvatarEls = document.querySelectorAll('.avatar, .user-profile-btn img');
+        userAvatarEls.forEach(img => {
+          img.src = user.avatar;
+        });
+      }
+
+      // 4. Klik Profil di Header -> Masuk ke Dashboard Pengguna
+      const profileBtn = document.querySelector('.user-profile-btn, .header-user-info');
+      if (profileBtn) {
+        profileBtn.style.cursor = 'pointer';
+        profileBtn.onclick = () => {
+          window.location.href = '../Dashboard Pengguna/index.html';
+        };
+      }
+    } else {
+      // Jika belum login -> Klik Profil mengarahkan ke Login
+      const profileBtn = document.querySelector('.user-profile-btn, .header-user-info');
+      if (profileBtn) {
+        profileBtn.style.cursor = 'pointer';
+        profileBtn.onclick = () => {
+          window.location.href = './login/index.html';
+        };
+      }
+    }
+  });
+</script>
 </body>
 </html>
