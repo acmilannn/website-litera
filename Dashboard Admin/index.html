@@ -15,7 +15,7 @@
     <header class="site-header">
         <div class="header-container">
             <!-- Brand Logo Litera -->
-            <div class="brand-logo" onclick="location.href='admin-dashboard.html'">
+            <div class="brand-logo" onclick="location.href='index.html'">
                 <img src="../foto/logo.jpeg" alt="Logo Litera" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=100&auto=format&fit=crop&q=80'">
                 <div class="brand-tagline">
                     <span class="brand-tagline-title">LITERA ADMIN</span>
@@ -56,6 +56,10 @@
                 <button onclick="showAdminSection('overview-admin')" id="menu-overview-admin" class="menu-item active">
                     <i class="fa-solid fa-chart-line"></i>
                     <span>Statistik Sistem</span>
+                </button>
+                <button onclick="showAdminSection('inventory-section')" id="menu-inventory" class="menu-item">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    <span>Kelola Stok & Katalog</span>
                 </button>
                 <button onclick="showAdminSection('qc-section')" id="menu-qc" class="menu-item">
                     <i class="fa-solid fa-clipboard-check"></i>
@@ -151,6 +155,84 @@
                                 <td>Atomic Habits</td>
                                 <td class="price">Rp 85.000</td>
                                 <td><span class="status-badge green">Selesai</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION BARU: KELOLA STOK & INVENTORY OMNICHANNEL -->
+            <div id="inventory-section" class="dashboard-section">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h2>Dashboard Omnichannel Inventory LITERA</h2>
+                        <p>Single Source of Truth (Database WooCommerce & Cloud RDS Sync)</p>
+                    </div>
+                    <button class="btn-success-sm" style="padding: 0.5rem 0.8rem; font-size: 0.75rem;" onclick="alert('Form tambah stok buku akan dibuka.')">
+                        <i class="fa-solid fa-plus"></i> Tambah Stok Buku
+                    </button>
+                </div>
+
+                <div class="content-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>JUDUL & PENULIS</th>
+                                <th>KATEGORI</th>
+                                <th>GRADE KONDISI</th>
+                                <th>HARGA</th>
+                                <th>STOK SINGLE-SOURCE</th>
+                                <th>AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Risalah Kebangkitan - Penalaran terhadap Realitas Akhirat</strong></td>
+                                <td>Agama</td>
+                                <td>Grade B+ (Layak Baca)</td>
+                                <td class="price">Rp 50.000</td>
+                                <td><span class="status-badge blue">1 UNIT (READY)</span></td>
+                                <td><button class="btn-danger-sm" onclick="alert('Hapus data buku')">Hapus</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Namaku Alam</strong></td>
+                                <td>Fiksi</td>
+                                <td>Grade A (Mulus)</td>
+                                <td class="price">Rp 65.000</td>
+                                <td><span class="status-badge blue">1 UNIT (READY)</span></td>
+                                <td><button class="btn-danger-sm" onclick="alert('Hapus data buku')">Hapus</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Animal Farm (Republik Hewan)</strong></td>
+                                <td>Fiksi</td>
+                                <td>Grade A (Mulus)</td>
+                                <td class="price">Rp 45.000</td>
+                                <td><span class="status-badge blue">1 UNIT (READY)</span></td>
+                                <td><button class="btn-danger-sm" onclick="alert('Hapus data buku')">Hapus</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Angel & Demon</strong></td>
+                                <td>Bisnis</td>
+                                <td>Grade A (Mulus)</td>
+                                <td class="price">Rp 50.000</td>
+                                <td><span class="status-badge blue">1 UNIT (READY)</span></td>
+                                <td><button class="btn-danger-sm" onclick="alert('Hapus data buku')">Hapus</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Filsafat Sains - Dari Newton, Einstein hingga Sains-Data</strong></td>
+                                <td>Filsafat</td>
+                                <td>Grade B (Layak)</td>
+                                <td class="price">Rp 50.000</td>
+                                <td><span class="status-badge blue">1 UNIT (READY)</span></td>
+                                <td><button class="btn-danger-sm" onclick="alert('Hapus data buku')">Hapus</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Filosofi Teras - Filsafat Yunani-Romawi Kuno</strong></td>
+                                <td>Filsafat</td>
+                                <td>Grade A (Mulus)</td>
+                                <td class="price">Rp 55.000</td>
+                                <td><span class="status-badge blue">1 UNIT (READY)</span></td>
+                                <td><button class="btn-danger-sm" onclick="alert('Hapus data buku')">Hapus</button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -304,6 +386,7 @@
             
             let targetMenuId = 'menu-' + sectionId.replace('-admin', '').replace('-section', '');
             if (sectionId === 'overview-admin') targetMenuId = 'menu-overview-admin';
+            if (sectionId === 'inventory-section') targetMenuId = 'menu-inventory';
             if (sectionId === 'admin-profile-section') targetMenuId = 'menu-admin-profile';
             
             const targetMenu = document.getElementById(targetMenuId);
