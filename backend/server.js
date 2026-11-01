@@ -5,9 +5,10 @@ const cors = require('cors');
 const app = express();
 const PORT = 3000;
 
-// Middleware
+// Middleware (Limit 10mb untuk foto Base64)
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // 1. KONFIGURASI KONEKSI DATABASE MYSQL (XAMPP)
 const db = mysql.createConnection({
@@ -31,34 +32,46 @@ db.connect((err) => {
 
 // [GET] Mengambil semua data buku dari database
 app.get('/api/books', (req, res) => {
-    db.query('SELECT * FROM books', (err, results) => {
+    db.query('SELECT * FROM books ORDER BY id DESC', (err, results) => {
         if (err) {
             res.status(500).json({ success: false, error: err.message });
         } else {
-            res.json({ success: true, data: results });
+            res.json({ success: true, books: results, data: results });
         }
     });
 });
 
-// [POST] Menambah buku baru ke database
+// [POST] Menambah buku baru ke database (Admin Upload Foto & Detail)
 app.post('/api/books', (req, res) => {
-    const { title, author, category, grade, price, stock, status } = req.body;
-    
-    const query = `INSERT INTO books (title, author, category, grade, price, stock, status) 
-                   VALUES (?, ?, ?, ?, ?, ?, ?)`;
-                   
-    db.query(query, [title, author, category, grade, price, stock, status], (err, result) => {
+    const { title, author, category, grade, price, rating, img, desc } = req.body;
+
+    // Perhatikan: 9 Nama Kolom = 9 Parameter (7 buah '?' + 1 + 'READY')
+    const query = `
+        INSERT INTO books (title, author, category, grade, price, rating, img, description, stock, status) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, 'READY')
+    `;
+
+    const values = [
+        title,
+        author,
+        category,
+        grade,
+        Number(price) || 0,
+        parseFloat(rating) || 4.8,
+        img,
+        desc
+    ];
+
+    db.query(query, values, (err, result) => {
         if (err) {
-            res.status(500).json({ success: false, message: 'Gagal menambah buku', error: err.message });
-        } else {
-            res.json({ 
-                success: true, 
-                message: 'Buku berhasil disimpan ke database!', 
-                insertId: result.insertId 
-            });
+            console.error('Error MySQL Query:', err);
+            return res.status(500).json({ success: false, message: 'Gagal menambah buku: ' + err.message });
         }
+        res.json({ success: true, message: 'Buku berhasil ditambahkan!', id: result.insertId });
     });
 });
+
+
 
 // ==========================================
 // 3. ROUTE / ENDPOINT API UNTUK CHECKOUT
@@ -66,12 +79,12 @@ app.post('/api/books', (req, res) => {
 
 // [POST] Memproses transaksi checkout & menyimpan ke tabel orders
 app.post('/api/checkout', (req, res) => {
-    const { customer_name, customer_phone, region, address, courier, payment_method, total_price } = req.body;
+    const { customer_name, customer_phone, region, address, courier, payment_method, total_price, items } = req.body;
 
-    const query = `INSERT INTO orders (customer_name, customer_phone, region, address, courier, payment_method, total_price) 
-                   VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO orders (customer_name, customer_phone, region, address, courier, payment_method, total_price, items) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
-    db.query(query, [customer_name, customer_phone, region, address, courier, payment_method, total_price], (err, result) => {
+    db.query(query, [customer_name, customer_phone, region, address, courier, payment_method, total_price, items || ''], (err, result) => {
         if (err) {
             console.error("Gagal menyimpan pesanan:", err);
             res.status(500).json({ success: false, message: 'Gagal menyimpan transaksi ke database' });
@@ -112,7 +125,7 @@ app.post('/api/register', (req, res) => {
     });
 });
 
-// 2. Login Akun (Sesuai Role User/Admin) - LANGKAH 2
+// 2. Login Akun (Sesuai Role User/Admin)
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
 
@@ -144,8 +157,8 @@ app.post('/api/login', (req, res) => {
 app.listen(PORT, () => {
     console.log("==================================================");
     console.log(`LITERA Backend API Server Running on port ${PORT}`);
-    console.log(`Endpoint Books   : http://localhost:${PORT}/api/books`);
-    console.log(`Endpoint Checkout: http://localhost:${PORT}/api/checkout`);
+    console.log(`Endpoint Books    : http://localhost:${PORT}/api/books`);
+    console.log(`Endpoint Checkout : http://localhost:${PORT}/api/checkout`);
     console.log(`Endpoint Auth     : http://localhost:${PORT}/api/login & /api/register`);
     console.log("==================================================");
 });

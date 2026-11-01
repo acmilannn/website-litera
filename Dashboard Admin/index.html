@@ -8,6 +8,32 @@
     <link rel="stylesheet" href="dashboardadmin.css">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Modal Pop-up Form Tambah Buku */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+        .modal-card {
+            background: #ffffff;
+            width: 90%; max-width: 650px;
+            max-height: 90vh; overflow-y: auto;
+            border-radius: 12px; padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #eee; padding-bottom: 0.75rem; margin-bottom: 1rem;
+        }
+        .modal-close {
+            background: none; border: none; font-size: 1.25rem; cursor: pointer; color: #666;
+        }
+        .hidden-modal { display: none !important; }
+    </style>
 </head>
 <body>
 
@@ -15,7 +41,7 @@
     <header class="site-header">
         <div class="header-container">
             <!-- Brand Logo Litera -->
-            <div class="brand-logo" onclick="location.href='index.html'">
+            <div class="brand-logo" onclick="location.href='../Katalog/index.html'" style="cursor: pointer;">
                 <img src="../foto/logo.jpeg" alt="Logo Litera" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=100&auto=format&fit=crop&q=80'">
                 <div class="brand-tagline">
                     <span class="brand-tagline-title">LITERA ADMIN</span>
@@ -43,7 +69,7 @@
     <!-- DASHBOARD CONTAINER -->
     <div class="dashboard-container">
 
-        <!-- SIDEBAR ADMIN -->
+        <!-- SIDEBAR ADMIN MENU -->
         <aside class="sidebar">
             <div class="user-card-summary">
                 <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80" alt="Admin" class="sidebar-avatar" id="sidebar-admin-avatar">
@@ -77,7 +103,7 @@
                     <i class="fa-solid fa-user-gear"></i>
                     <span>Perbarui Profil Admin</span>
                 </button>
-                <a href="/login/index.html" class="menu-item logout-btn">
+                <a href="../login/index.html" class="menu-item logout-btn">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Keluar (Logout)</span>
                 </a>
@@ -94,7 +120,6 @@
                     <p>Ringkasan data operasional platform Litera secara real-time.</p>
                 </div>
 
-                <!-- STATS GRID -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon red"><i class="fa-solid fa-book"></i></div>
@@ -126,7 +151,6 @@
                     </div>
                 </div>
 
-                <!-- QUICK ACTIVITY TABLE -->
                 <div class="content-card">
                     <div class="card-title-bar">
                         <h3><i class="fa-solid fa-clock-rotate-left"></i> Aktivitas Transaksi Terbaru</h3>
@@ -161,14 +185,14 @@
                 </div>
             </div>
 
-            <!-- SECTION BARU: KELOLA STOK & INVENTORY OMNICHANNEL -->
+            <!-- SECTION 2: KELOLA STOK & INVENTORY OMNICHANNEL -->
             <div id="inventory-section" class="dashboard-section">
                 <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <h2>Dashboard Omnichannel Inventory LITERA</h2>
                         <p>Single Source of Truth (Database WooCommerce & Cloud RDS Sync)</p>
                     </div>
-                    <button class="btn-success-sm" style="padding: 0.5rem 0.8rem; font-size: 0.75rem;" onclick="alert('Form tambah stok buku akan dibuka.')">
+                    <button class="btn-success-sm" style="padding: 0.5rem 0.8rem; font-size: 0.75rem; cursor: pointer;" onclick="toggleAddBookModal(true)">
                         <i class="fa-solid fa-plus"></i> Tambah Stok Buku
                     </button>
                 </div>
@@ -185,14 +209,15 @@
                                 <th>AKSI</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="inventory-table-body">
+                            <!-- PRODUK BAWAAN (TETAP ADA) -->
                             <tr>
                                 <td><strong>Risalah Kebangkitan - Penalaran terhadap Realitas Akhirat</strong></td>
                                 <td>Agama</td>
                                 <td>Grade B+ (Layak Baca)</td>
                                 <td class="price">Rp 50.000</td>
                                 <td><span class="status-badge blue">1 UNIT (READY)</span></td>
-                                <td><button class="btn-danger-sm" onclick="alert('Hapus data buku')">Hapus</button></td>
+                                <td><button class="btn-danger-sm" onclick="alert('Buku bawaan awal sistem.')">Hapus</button></td>
                             </tr>
                             <tr>
                                 <td><strong>Namaku Alam</strong></td>
@@ -200,7 +225,7 @@
                                 <td>Grade A (Mulus)</td>
                                 <td class="price">Rp 65.000</td>
                                 <td><span class="status-badge blue">1 UNIT (READY)</span></td>
-                                <td><button class="btn-danger-sm" onclick="alert('Hapus data buku')">Hapus</button></td>
+                                <td><button class="btn-danger-sm" onclick="alert('Buku bawaan awal sistem.')">Hapus</button></td>
                             </tr>
                             <tr>
                                 <td><strong>Animal Farm (Republik Hewan)</strong></td>
@@ -208,7 +233,7 @@
                                 <td>Grade A (Mulus)</td>
                                 <td class="price">Rp 45.000</td>
                                 <td><span class="status-badge blue">1 UNIT (READY)</span></td>
-                                <td><button class="btn-danger-sm" onclick="alert('Hapus data buku')">Hapus</button></td>
+                                <td><button class="btn-danger-sm" onclick="alert('Buku bawaan awal sistem.')">Hapus</button></td>
                             </tr>
                             <tr>
                                 <td><strong>Angel & Demon</strong></td>
@@ -216,7 +241,7 @@
                                 <td>Grade A (Mulus)</td>
                                 <td class="price">Rp 50.000</td>
                                 <td><span class="status-badge blue">1 UNIT (READY)</span></td>
-                                <td><button class="btn-danger-sm" onclick="alert('Hapus data buku')">Hapus</button></td>
+                                <td><button class="btn-danger-sm" onclick="alert('Buku bawaan awal sistem.')">Hapus</button></td>
                             </tr>
                             <tr>
                                 <td><strong>Filsafat Sains - Dari Newton, Einstein hingga Sains-Data</strong></td>
@@ -224,7 +249,7 @@
                                 <td>Grade B (Layak)</td>
                                 <td class="price">Rp 50.000</td>
                                 <td><span class="status-badge blue">1 UNIT (READY)</span></td>
-                                <td><button class="btn-danger-sm" onclick="alert('Hapus data buku')">Hapus</button></td>
+                                <td><button class="btn-danger-sm" onclick="alert('Buku bawaan awal sistem.')">Hapus</button></td>
                             </tr>
                             <tr>
                                 <td><strong>Filosofi Teras - Filsafat Yunani-Romawi Kuno</strong></td>
@@ -232,14 +257,14 @@
                                 <td>Grade A (Mulus)</td>
                                 <td class="price">Rp 55.000</td>
                                 <td><span class="status-badge blue">1 UNIT (READY)</span></td>
-                                <td><button class="btn-danger-sm" onclick="alert('Hapus data buku')">Hapus</button></td>
+                                <td><button class="btn-danger-sm" onclick="alert('Buku bawaan awal sistem.')">Hapus</button></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- SECTION 2: VERIFIKASI QC BUKU TITIP JUAL -->
+            <!-- SECTION 3: VERIFIKASI QC BUKU TITIP JUAL -->
             <div id="qc-section" class="dashboard-section">
                 <div class="section-header">
                     <h2>Verifikasi Quality Control (QC) Buku Titipan</h2>
@@ -283,7 +308,7 @@
                 </div>
             </div>
 
-            <!-- SECTION 3: KELOLA PESANAN -->
+            <!-- SECTION 4: KELOLA PESANAN -->
             <div id="orders-admin" class="dashboard-section">
                 <div class="section-header">
                     <h2>Manajemen Pesanan & Pengiriman</h2>
@@ -294,7 +319,7 @@
                 </div>
             </div>
 
-            <!-- SECTION 4: DATA PENGGUNA -->
+            <!-- SECTION 5: DATA PENGGUNA -->
             <div id="users-section" class="dashboard-section">
                 <div class="section-header">
                     <h2>Daftar Pengguna Terdaftar</h2>
@@ -322,7 +347,7 @@
                 </div>
             </div>
 
-            <!-- SECTION 5: PERBARUI PROFIL ADMIN -->
+            <!-- SECTION 6: PERBARUI PROFIL ADMIN -->
             <div id="admin-profile-section" class="dashboard-section">
                 <div class="section-header">
                     <h2>Perbarui Profil Administrator</h2>
@@ -331,13 +356,11 @@
 
                 <div class="content-card">
                     <form class="profile-form" onsubmit="handleAdminProfileSubmit(event)">
-                        <!-- Avatar Change Box -->
                         <div class="avatar-edit-box">
                             <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80" alt="Admin Avatar" class="avatar-preview" id="admin-preview-img">
                             <div class="avatar-edit-info">
                                 <h4>Foto Profil Admin</h4>
                                 <p>Gunakan foto resmi berukuran maksimal 2MB.</p>
-                                
                                 <input type="file" id="admin-file-input" accept="image/*" style="display: none;" onchange="previewAdminPhoto(event)">
                                 <button type="button" class="btn-secondary-sm" onclick="document.getElementById('admin-file-input').click();">Ganti Foto</button>
                             </div>
@@ -373,8 +396,85 @@
         </main>
     </div>
 
-    <!-- SCRIPT INTERACTIVE -->
+    <!-- MODAL POP-UP FORM TAMBAH STOK BUKU -->
+    <div id="modal-add-book" class="modal-overlay hidden-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-plus-circle"></i> Tambah Buku Baru ke Database MySQL</h3>
+                <button type="button" class="modal-close" onclick="toggleAddBookModal(false)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="form-add-book" onsubmit="handleAddBookSubmit(event)">
+                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+                    <img src="https://via.placeholder.com/120x150?text=Cover" id="book-cover-preview" style="width: 100px; height: 130px; object-fit: cover; border-radius: 6px; border: 1px dashed #ccc;">
+                    <div>
+                        <h4 style="font-size: 0.875rem;">Upload Foto Cover Sampul</h4>
+                        <p style="font-size: 0.75rem; color: #666; margin-bottom: 0.5rem;">Pilih foto fisik asli buku (Maks. 5MB).</p>
+                        <input type="file" id="book-file-input" accept="image/*" style="display: none;" onchange="previewBookCoverPhoto(event)">
+                        <button type="button" class="btn-secondary-sm" onclick="document.getElementById('book-file-input').click();">Pilih Foto Sampul</button>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.8125rem;">
+                    <div>
+                        <label style="font-weight: 600; display: block;">Judul Buku</label>
+                        <input type="text" id="prod-title" placeholder="Contoh: Let Them Theory" required style="width: 100%; padding: 0.4rem;">
+                    </div>
+                    <div>
+                        <label style="font-weight: 600; display: block;">Penulis / Pengarang</label>
+                        <input type="text" id="prod-author" placeholder="Contoh: Mel Robbins" required style="width: 100%; padding: 0.4rem;">
+                    </div>
+                    <div>
+                        <label style="font-weight: 600; display: block;">Kategori</label>
+                        <select id="prod-category" style="width: 100%; padding: 0.4rem;" required>
+                            <option value="Fiksi">Novel & Fiksi</option>
+                            <option value="Filsafat">Filsafat & Self-Improvement</option>
+                            <option value="Agama">Agama & Studi Islam</option>
+                            <option value="Bisnis">Bisnis & Manajemen</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-weight: 600; display: block;">Grade Kondisi</label>
+                        <select id="prod-grade" style="width: 100%; padding: 0.4rem;" required>
+                            <option value="Grade A (Mulus)">Grade A (Mulus / Pre-loved Like New)</option>
+                            <option value="Grade B+ (Layak Baca)">Grade B+ (Layak Baca / Lekuk Tipis)</option>
+                            <option value="Grade B (Layak)">Grade B (Coretan Tipis / Terawat)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-weight: 600; display: block;">Harga (Rp)</label>
+                        <input type="text" id="prod-price" placeholder="65000" required style="width: 100%; padding: 0.4rem;">
+                    </div>
+                    <div>
+                        <label style="font-weight: 600; display: block;">Rating Awal (1 - 5)</label>
+                        <input type="number" step="0.1" min="1" max="5" id="prod-rating" value="4.8" required style="width: 100%; padding: 0.4rem;">
+                    </div>
+                    <div style="grid-column: span 2;">
+                        <label style="font-weight: 600; display: block;">Deskripsi Detail Buku</label>
+                        <textarea id="prod-desc" rows="3" placeholder="Tuliskan penerbit dan kelengkapan fisik buku..." required style="width: 100%; padding: 0.4rem;"></textarea>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1rem; text-align: right;">
+                    <button type="button" onclick="toggleAddBookModal(false)" style="padding: 0.5rem 1rem; border: none; background: #eee; border-radius: 4px; cursor: pointer; margin-right: 0.5rem;">Batal</button>
+                    <button type="submit" class="btn-submit" style="padding: 0.5rem 1rem; cursor: pointer;">Simpan ke Database</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT INTERACTIVE & REST API BACKEND -->
     <script>
+        let uploadedCoverBase64 = null;
+
+        // Buka / Tutup Modal Form Pop-up
+        function toggleAddBookModal(show) {
+            const modal = document.getElementById('modal-add-book');
+            if (show) modal.classList.remove('hidden-modal');
+            else modal.classList.add('hidden-modal');
+        }
+
+        // Switcher Menu Admin Sidebar
         function showAdminSection(sectionId) {
             const sections = document.querySelectorAll('.dashboard-section');
             sections.forEach(sec => sec.classList.remove('active-section'));
@@ -386,13 +486,136 @@
             
             let targetMenuId = 'menu-' + sectionId.replace('-admin', '').replace('-section', '');
             if (sectionId === 'overview-admin') targetMenuId = 'menu-overview-admin';
-            if (sectionId === 'inventory-section') targetMenuId = 'menu-inventory';
+            if (sectionId === 'inventory-section') {
+                targetMenuId = 'menu-inventory';
+                fetchAdminInventoryFromMySQL();
+            }
             if (sectionId === 'admin-profile-section') targetMenuId = 'menu-admin-profile';
             
             const targetMenu = document.getElementById(targetMenuId);
             if (targetMenu) targetMenu.classList.add('active');
         }
 
+        // Preview Foto Cover Buku
+        function previewBookCoverPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedCoverBase64 = e.target.result;
+                    document.getElementById('book-cover-preview').src = uploadedCoverBase64;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Submit Form ke Backend Node.js API (litera_db)
+        function handleAddBookSubmit(e) {
+            e.preventDefault();
+
+            if (!uploadedCoverBase64) {
+                alert('Harap unggah foto cover buku terlebih dahulu!');
+                return;
+            }
+
+            // Sanitasi input harga dari karakter koma/titik
+            const rawPrice = document.getElementById('prod-price').value.toString();
+            const cleanPrice = Number(rawPrice.replace(/[^0-9]/g, ''));
+
+            const newBookData = {
+                title: document.getElementById('prod-title').value,
+                author: document.getElementById('prod-author').value,
+                category: document.getElementById('prod-category').value,
+                grade: document.getElementById('prod-grade').value,
+                price: cleanPrice || 0,
+                rating: parseFloat(document.getElementById('prod-rating').value) || 4.8,
+                img: uploadedCoverBase64,
+                desc: document.getElementById('prod-desc').value
+            };
+
+            fetch('http://localhost:3000/api/books', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newBookData)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`✅ Buku "${newBookData.title}" berhasil disimpan ke Database MySQL!`);
+                    document.getElementById('form-add-book').reset();
+                    document.getElementById('book-cover-preview').src = 'https://via.placeholder.com/120x150?text=Cover';
+                    uploadedCoverBase64 = null;
+                    toggleAddBookModal(false);
+                    fetchAdminInventoryFromMySQL();
+                } else {
+                    alert('Gagal menyimpan buku: ' + (data.message || data.error));
+                }
+            })
+            .catch(err => {
+                console.error('Error API Admin:', err);
+                alert('Gagal terhubung ke backend server! Pastikan node server.js sedang berjalan.');
+            });
+        }
+
+        // Mengambil Data Buku dari MySQL & Menampilkan Tombol Hapus Berfungsi
+        function fetchAdminInventoryFromMySQL() {
+            fetch('http://localhost:3000/api/books')
+                .then(res => res.json())
+                .then(result => {
+                    const tbody = document.getElementById('inventory-table-body');
+                    const booksList = result.books || result.data;
+                    
+                    if (result.success && booksList && booksList.length > 0) {
+                        booksList.forEach(book => {
+                            if (!document.getElementById(`book-row-${book.id}`)) {
+                                const tr = document.createElement('tr');
+                                tr.id = `book-row-${book.id}`;
+                                tr.innerHTML = `
+                                    <td><strong>${book.title}</strong><br><small style="color:#666;">${book.author || ''}</small></td>
+                                    <td>${book.category}</td>
+                                    <td>${book.grade}</td>
+                                    <td class="price">Rp ${Number(book.price).toLocaleString('id-ID')}</td>
+                                    <td><span class="status-badge blue">1 UNIT (READY)</span></td>
+                                    <td>
+                                        <button class="btn-danger-sm" onclick="deleteBookFromMySQL(${book.id}, '${book.title.replace(/'/g, "\\'")}')">
+                                            <i class="fa-solid fa-trash"></i> Hapus
+                                        </button>
+                                    </td>
+                                `;
+                                tbody.appendChild(tr);
+                            }
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.warn('Gagal mengambil data dari MySQL server:', err);
+                });
+        }
+
+        // Fungsi Menghapus Buku dari MySQL dan Tabel HTML secara Real-Time
+        function deleteBookFromMySQL(id, title) {
+            if (confirm(`Apakah Anda yakin ingin menghapus buku "${title}" dari database?`)) {
+                fetch(`http://localhost:3000/api/books/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`✅ Buku "${title}" berhasil dihapus dari Database MySQL!`);
+                        const row = document.getElementById(`book-row-${id}`);
+                        if (row) row.remove();
+                    } else {
+                        alert('Gagal menghapus buku: ' + data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error Hapus Buku:', err);
+                    alert('Terjadi kesalahan saat menghubungi server.');
+                });
+            }
+        }
+
+        // Preview & Simpan Profil Admin
         function previewAdminPhoto(event) {
             const file = event.target.files[0];
             if (file) {
@@ -413,6 +636,11 @@
             document.getElementById('header-admin-name').innerText = name;
             alert(`✅ Profil administrator atas nama "${name}" berhasil diperbarui!`);
         }
+
+        // Panggil fungsi saat halaman pertama kali dimuat
+        window.onload = function() {
+            fetchAdminInventoryFromMySQL();
+        };
     </script>
 </body>
 </html>

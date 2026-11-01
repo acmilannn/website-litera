@@ -42,7 +42,7 @@
                     <span id="cart-badge" class="badge">0</span>
                 </button>
                 <div class="divider-v"></div>
-                <!-- PROFIL PENGGUNA: Terhubung ke user-dashboard.html saat diklik -->
+                <!-- PROFIL PENGGUNA -->
                 <div class="user-profile" onclick="window.location.href='../Dashboard Pengguna/index.html'" style="cursor: pointer;">
                     <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="avatar">
                     <span class="username">Reza Putri</span>
@@ -327,9 +327,10 @@
 
     </main>
 
-    <!-- JAVASCRIPT LOGIC FRONTEND UTAMA -->
+    <!-- JAVASCRIPT LOGIC FRONTEND UTAMA & BACKEND FETCH -->
     <script>
-        let books = [
+        // Data Fallback / Produk Bawaan Original
+        let defaultBooks = [
             {
                 id: 1,
                 title: "Risalah Kebangkitan - Penalaran terhadap Realitas Akhirat",
@@ -339,7 +340,7 @@
                 price: 50000,
                 rating: 4.8,
                 img:"../foto/risalah kebangkitan.jpeg",
-                desc: "Judul: Risalah Kebangkitan – Penalaran terhadap Realitas Akhirat\nPenulis: Badiuzzaman Said Nursi (Risalah Nur Press)\nKondisi Fisik: Grade B+ (Layak Baca / Pre-loved Good Condition)\nDetail: Sudut cover kanan atas & bawah sedikit berlekuk/aus pemakaian wajar. Lembaran kertas dalam utuh, tidak ada halaman sobek, teks terbaca jelas."
+                desc: "Judul: Risalah Kebangkitan – Penalaran terhadap Realitas Akhirat\nPenulis: Badiuzzaman Said Nursi (Risalah Nur Press)\nKondisi Fisik: Grade B+ (Layak Baca / Pre-loved Good Condition)\nDetail: Sudut cover kanan atas & bawah sedikit berlekuk/aus pemakaian wajar."
             },
             {
                 id: 2,
@@ -350,7 +351,7 @@
                 price: 65000,
                 rating: 4.9,
                 img: "../foto/namaku alam.jpeg",
-                desc: "Judul: Namaku Alam\nPenulis: Leila S. Chudori (Penerbit KPG)\nKondisi Fisik: Grade A (Pre-loved Like New / Mulus Original)\nDetail: Cover tebal bersih, jilidan kuat, kertas bersih tanpa coretan atau stabilo."
+                desc: "Judul: Namaku Alam\nPenulis: Leila S. Chudori (Penerbit KPG)\nKondisi Fisik: Grade A (Pre-loved Like New / Mulus Original)"
             },
             {
                 id: 3,
@@ -361,7 +362,7 @@
                 price: 45000,
                 rating: 4.7,
                 img: "../foto/animal farm.jpeg",
-                desc: "Judul: Animal Farm (Republik Hewan)\nPenulis: George Orwell (Gramedia Pustaka Utama)\nKondisi Fisik: Grade A (Mulus Original)\nDetail: Novel alegori klasik populer. Sampul rapi dan halaman utuh."
+                desc: "Judul: Animal Farm (Republik Hewan)\nPenulis: George Orwell (Gramedia Pustaka Utama)\nKondisi Fisik: Grade A (Mulus Original)"
             },
             {
                 id: 4,
@@ -372,7 +373,7 @@
                 price: 50000,
                 rating: 4.6,
                 img: "../foto/angel & demon.jpeg",
-                desc: "Judul: Angel & Demon\nPenulis: Helena Abidin, Suhartono Chandra, Timoteus Talip (Grasindo)\nCatatan: National Bestseller dengan Pengantar oleh Wimar Witoelar.\nKondisi Fisik: Grade A (Preloved Mulus)."
+                desc: "Judul: Angel & Demon\nPenulis: Helena Abidin, Suhartono Chandra, Timoteus Talip (Grasindo)\nCatatan: National Bestseller."
             },
             {
                 id: 5,
@@ -383,7 +384,7 @@
                 price: 50000,
                 rating: 4.5,
                 img: "../foto/filsafat sains.jpeg",
-                desc: "Judul: Filsafat Sains – Dari Newton, Einstein hingga Sains-Data\nPenulis: Dimitri Mahayana\nKondisi Fisik: Grade B (Layak Baca / Lekukan di Sudut Cover)\nDetail: Halaman lengkap dan isi bacaan sangat jelas, cocok untuk mahasiswa referensi kuliah."
+                desc: "Judul: Filsafat Sains – Dari Newton, Einstein hingga Sains-Data\nPenulis: Dimitri Mahayana\nKondisi Fisik: Grade B"
             },
             {
                 id: 6,
@@ -394,7 +395,7 @@
                 price: 55000,
                 rating: 5.0,
                 img: "../foto/filosofi teras.jpeg",
-                desc: "Judul: Filosofi Teras\nPenulis: Henry Manampiring\nCatatan: National Best Seller Stoisisme Modern.\nKondisi Fisik: Grade A (Mulus & Original)."
+                desc: "Judul: Filosofi Teras\nPenulis: Henry Manampiring\nCatatan: National Best Seller Stoisisme Modern."
             },
             {
                 id: 7,
@@ -405,7 +406,7 @@
                 price: 50000,
                 rating: 4.8,
                 img: "../foto/tentang kamu.jpeg",
-                desc: "Judul: Tentang Kamu\nPenulis: Tere Liye\nKondisi Fisik: Grade B+ (Preloved Bagus).\nDetail: Bekas pemakaian wajar pada sudut sampul, bagian dalam utuh dan bersih."
+                desc: "Judul: Tentang Kamu\nPenulis: Tere Liye\nKondisi Fisik: Grade B+ (Preloved Bagus)."
             },
             {
                 id: 8,
@@ -431,12 +432,45 @@
             }
         ];
 
+        let books = [];
         let cart = [];
         let selectedPdp = null;
 
+        // FETCH BUKU DARI MYSQL SERVER NODE.JS (SINKRONISASI DATABASES + DEFAULT)
         window.onload = function() {
-            renderProducts(books);
+            fetchBooksFromBackend();
         };
+
+        function fetchBooksFromBackend() {
+            fetch('http://localhost:3000/api/books')
+                .then(res => res.json())
+                .then(result => {
+                    const dbData = result.books || result.data;
+                    let dbBooks = [];
+                    if (result.success && dbData && dbData.length > 0) {
+                        dbBooks = dbData.map(b => ({
+                            id: b.id,
+                            title: b.title,
+                            author: b.author,
+                            category: b.category,
+                            grade: b.grade,
+                            price: Number(b.price),
+                            rating: b.rating || 4.8,
+                            img: b.img,
+                            desc: b.description || b.desc || 'Deskripsi belum tersedia.'
+                        }));
+                    }
+                    
+                    // PERBAIKAN LOGIKA: Gabungkan data dari MySQL di posisi terdepan dengan data default!
+                    books = [...dbBooks, ...defaultBooks];
+                    renderProducts(books);
+                })
+                .catch(err => {
+                    console.warn('Gagal terhubung ke MySQL API Backend, menggunakan data lokal fallback.', err);
+                    books = defaultBooks;
+                    renderProducts(books);
+                });
+        }
 
         function navigate(page) {
             ['home', 'pdp', 'cart', 'orders', 'returns'].forEach(p => {
@@ -472,17 +506,21 @@
         function renderProducts(list) {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
+            if (list.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--litera-gray); padding: 2rem;">Buku yang dicari tidak ditemukan.</p>';
+                return;
+            }
             list.forEach(b => {
                 grid.innerHTML += `
                     <div class="product-card">
                         <div>
-                            <div class="product-img-wrapper" onclick="openPdp(${b.id})">
+                            <div class="product-img-wrapper" onclick="openPdp('${b.id}')">
                                 <img src="${b.img}" alt="${b.title}">
                                 <span class="badge-cat">${b.category}</span>
                                 <span class="badge-grade">${b.grade}</span>
                             </div>
                             <div class="product-info">
-                                <h3 onclick="openPdp(${b.id})" class="product-title">${b.title}</h3>
+                                <h3 onclick="openPdp('${b.id}')" class="product-title">${b.title}</h3>
                                 <p class="product-author">${b.author}</p>
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
                                     <span class="product-price">Rp ${b.price.toLocaleString('id-ID')}</span>
@@ -491,7 +529,7 @@
                             </div>
                         </div>
                         <div class="product-action">
-                            <button onclick="addToCart(${b.id})" class="btn-secondary">+ Keranjang</button>
+                            <button onclick="addToCart('${b.id}')" class="btn-secondary">+ Keranjang</button>
                         </div>
                     </div>
                 `;
@@ -499,7 +537,7 @@
         }
 
         function openPdp(id) {
-            selectedPdp = books.find(b => b.id === id);
+            selectedPdp = books.find(b => String(b.id) === String(id));
             if (!selectedPdp) return;
             document.getElementById('pdp-img').src = selectedPdp.img;
             document.getElementById('pdp-title').innerText = selectedPdp.title;
@@ -512,7 +550,8 @@
         }
 
         function addToCart(id) {
-            const item = books.find(b => b.id === id);
+            const item = books.find(b => String(b.id) === String(id));
+            if (!item) return;
             cart.push(item);
             document.getElementById('cart-badge').innerText = cart.length;
             updateCartSummary();
@@ -526,9 +565,11 @@
         }
 
         function addBundleToCart() {
-            addToCart(5);
-            addToCart(1);
-            addToCart(6);
+            if (books.length >= 3) {
+                addToCart(books[0].id);
+                addToCart(books[1].id);
+                addToCart(books[2].id);
+            }
             navigate('cart');
         }
 
@@ -584,7 +625,6 @@
             if (region === 'Gowa' || region === 'Maros') ongkir += 2000;
             let totalPrice = subtotal + ongkir;
 
-            // Menggabungkan judul-judul buku yang dibeli di keranjang menjadi satu string untuk kolom items
             let purchasedItems = cart.map(item => item.title).join(" | ");
 
             fetch('http://localhost:3000/api/checkout', {
@@ -598,12 +638,12 @@
                     courier: courier,
                     payment_method: payment,
                     total_price: totalPrice,
-                    items: purchasedItems // Mengirim judul buku asli ke backend
+                    items: purchasedItems
                 })
             })
             .then(res => res.json())
             .then(data => {
-                alert("✅ Checkout Berhasil & Disimpan ke Database!");
+                alert("✅ Checkout Berhasil & Disimpan ke Database MySQL!");
                 cart = [];
                 document.getElementById('cart-badge').innerText = "0";
                 navigate('orders');
@@ -623,53 +663,49 @@
             navigate('home');
         }
     </script>
+
+    <!-- SINKRONISASI PROFIL USER DARI LOCALSTORAGE -->
     <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // Read data user login dari localStorage
-    const user = JSON.parse(localStorage.getItem('user'));
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('user'));
 
-    if (user) {
-      // 1. Update Nama Pengguna di Header Katalog
-      const userNameEls = document.querySelectorAll('.username, .user-name, .profile-text .username');
-      userNameEls.forEach(el => {
-        el.textContent = user.nama;
-      });
+            if (user) {
+                const userNameEls = document.querySelectorAll('.username, .user-name, .profile-text .username');
+                userNameEls.forEach(el => {
+                    el.textContent = user.nama;
+                });
 
-      // 2. Update Status/Keterangan Akademik (jika ada di UI)
-      const userRoleEls = document.querySelectorAll('.user-role, .user-email');
-      userRoleEls.forEach(el => {
-        if (user.role) {
-          el.textContent = user.role;
-        }
-      });
+                const userRoleEls = document.querySelectorAll('.user-role, .user-email');
+                userRoleEls.forEach(el => {
+                    if (user.role) {
+                        el.textContent = user.role;
+                    }
+                });
 
-      // 3. Update Foto Profil (jika ada avatar khusus)
-      if (user.avatar) {
-        const userAvatarEls = document.querySelectorAll('.avatar, .user-profile-btn img');
-        userAvatarEls.forEach(img => {
-          img.src = user.avatar;
+                if (user.avatar) {
+                    const userAvatarEls = document.querySelectorAll('.avatar, .user-profile-btn img');
+                    userAvatarEls.forEach(img => {
+                        img.src = user.avatar;
+                    });
+                }
+
+                const profileBtn = document.querySelector('.user-profile, .user-profile-btn, .header-user-info');
+                if (profileBtn) {
+                    profileBtn.style.cursor = 'pointer';
+                    profileBtn.onclick = () => {
+                        window.location.href = '../Dashboard Pengguna/index.html';
+                    };
+                }
+            } else {
+                const profileBtn = document.querySelector('.user-profile, .user-profile-btn, .header-user-info');
+                if (profileBtn) {
+                    profileBtn.style.cursor = 'pointer';
+                    profileBtn.onclick = () => {
+                        window.location.href = '../login/index.html';
+                    };
+                }
+            }
         });
-      }
-
-      // 4. Klik Profil di Header -> Masuk ke Dashboard Pengguna
-      const profileBtn = document.querySelector('.user-profile-btn, .header-user-info');
-      if (profileBtn) {
-        profileBtn.style.cursor = 'pointer';
-        profileBtn.onclick = () => {
-          window.location.href = '../Dashboard Pengguna/index.html';
-        };
-      }
-    } else {
-      // Jika belum login -> Klik Profil mengarahkan ke Login
-      const profileBtn = document.querySelector('.user-profile-btn, .header-user-info');
-      if (profileBtn) {
-        profileBtn.style.cursor = 'pointer';
-        profileBtn.onclick = () => {
-          window.location.href = './login/index.html';
-        };
-      }
-    }
-  });
-</script>
+    </script>
 </body>
 </html>
