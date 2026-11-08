@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LITERA Hub - Digital Library & Book Hub</title>
+    <!-- Menghubungkan ke CSS terpisah -->
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome Icons & Google Fonts -->
+    <link rel="stylesheet" href="halamanpages.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- NAVBAR MAIN -->
+    <header>
+        <div class="nav-container">
+            <div class="brand" onclick="location.href='index.html'">
+                <img src="../foto/logo.jpeg" alt="Logo Litera" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=100&auto=format&fit=crop&q=80'">
+                <div class="brand-text">
+                    <h1>LITERA</h1>
+                    <span>Digital Library & Hub</span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="#artikel">Artikel</a>
+                <a href="#tentang-kami">Tentang Kami</a>
+                <a href="login.html" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SLIDER SECTION (Bergerak Otomatis) -->
+    <section class="hero-slider-wrapper">
+        <div class="hero-slider" id="heroSlider">
+            <!-- SLIDE 1 -->
+            <div class="slide">
+                <div class="hero-content">
+                    <h2>Pusat Literasi & <span>Titip Jual Buku</span> Mahasiswa</h2>
+                    <p>Platform digital terpadu untuk mencari referensi akademik dan memutar kembali buku bekas berkualitas di wilayah Makassar dan sekitarnya.</p>
+                    <div class="hero-btns">
+                        <a href="login.html" class="btn-primary"><i class="fa-solid fa-rocket"></i> Mulai Sekarang</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&auto=format&fit=crop&q=80" alt="Buku Literasi">
+                </div>
+            </div>
+
+            <!-- SLIDE 2 -->
+            <div class="slide">
+                <div class="hero-content">
+                    <h2>Barter & Jual Buku <span>Mudah dan Aman</span></h2>
+                    <p>Sistem verifikasi Quality Control (QC) fisik memastikan kondisi buku bekas perkuliahan tetap layak baca bagi pembeli berikutnya.</p>
+                    <div class="hero-btns">
+                        <a href="login.html" class="btn-primary"><i class="fa-solid fa-hand-holding-hand"></i> Ajukan Titip Jual</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&auto=format&fit=crop&q=80" alt="Barter Buku">
+                </div>
+            </div>
+
+            <!-- SLIDE 3 -->
+            <div class="slide">
+                <div class="hero-content">
+                    <h2>Akses Ribuan <span>Artikel Akademik</span> Gratis</h2>
+                    <p>Dapatkan referensi penulisan tesis, jurnal ilmiah, dan panduan metode riset data terkini untuk mahasiswa.</p>
+                    <div class="hero-btns">
+                        <a href="#artikel" class="btn-primary"><i class="fa-solid fa-book-open"></i> Baca Artikel</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&auto=format&fit=crop&q=80" alt="Artikel Tesis">
+                </div>
+            </div>
+        </div>
+
+        <!-- INDIKATOR DOTS SLIDER -->
+        <div class="slider-dots">
+            <span class="dot active" onclick="goToSlide(0)"></span>
+            <span class="dot" onclick="goToSlide(1)"></span>
+            <span class="dot" onclick="goToSlide(2)"></span>
+        </div>
+    </section>
+
+    <!-- SEKSI ARTIKEL AKADEMIK (DIKLIK DARI NAVBAR) -->
+    <section class="articles-section" id="artikel">
+        <div class="container">
+            <div class="section-title">
+                <h3>Artikel & Publikasi Akademik</h3>
+                <p>Panduan penulisan tesis, metode penelitian, dan wawasan literasi digital mahasiswa.</p>
+            </div>
+
+            <!-- GRID KARTU ARTIKEL -->
+            <div class="articles-grid">
+                <!-- ARTIKEL 1 -->
+                <article class="article-card">
+                    <div class="article-badge blue">Akademik</div>
+                    <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&auto=format&fit=crop&q=80" alt="Panduan Tesis" class="article-img">
+                    <div class="article-content">
+                        <span class="article-date"><i class="fa-regular fa-calendar"></i> 28 Okt 2026</span>
+                        <h4>Panduan Penulisan Tesis Standar Internasional</h4>
+                        <p>Langkah demi langkah menyusun struktur bab, tinjauan pustaka, dan metodologi riset akademik...</p>
+                        <div class="article-author">
+                            <i class="fa-regular fa-user"></i> Dr. Admin Thesis
+                        </div>
+                        <button class="btn-read-more" onclick="alert('📖 Membuka Artikel: Panduan Penulisan Tesis Standar Internasional')">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </article>
+
+                <!-- ARTIKEL 2 -->
+                <article class="article-card">
+                    <div class="article-badge green">Tutorial</div>
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500&auto=format&fit=crop&q=80" alt="Analisis Data Python" class="article-img">
+                    <div class="article-content">
+                        <span class="article-date"><i class="fa-regular fa-calendar"></i> 25 Okt 2026</span>
+                        <h4>Strategi Analisis Data Menggunakan Python</h4>
+                        <p>Teknik pengolahan dataset e-commerce dan sentiment analysis untuk tugas akhir dan skripsi...</p>
+                        <div class="article-author">
+                            <i class="fa-regular fa-user"></i> Tim Riset Edu
+                        </div>
+                        <button class="btn-read-more" onclick="alert('📖 Membuka Artikel: Strategi Analisis Data Menggunakan Python')">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </article>
+
+                <!-- ARTIKEL 3 -->
+                <article class="article-card">
+                    <div class="article-badge blue">Penelitian</div>
+                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&auto=format&fit=crop&q=80" alt="Literasi Digital" class="article-img">
+                    <div class="article-content">
+                        <span class="article-date"><i class="fa-regular fa-calendar"></i> 20 Okt 2026</span>
+                        <h4>Dinamika Transaksi Saling Pinjam & Barter Buku</h4>
+                        <p>Studi kasus adaptasi platform C2C marketplace buku bekas di kalangan mahasiswa perguruan tinggi...</p>
+                        <div class="article-author">
+                            <i class="fa-regular fa-user"></i> Litera
+                        </div>
+                        <button class="btn-read-more" onclick="alert('📖 Membuka Artikel: Dinamika Transaksi Saling Pinjam')">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEKSI TENTANG KAMI -->
+    <section class="about-section" id="tentang-kami" style="padding: 4rem 2rem; background: #f8fafc;">
+        <div class="container" style="max-width: 1000px; margin: 0 auto; text-align: center;">
+            <div class="section-title">
+                <h3>Tentang LITERA Hub</h3>
+                <p>Platform perpustakaan digital dan hub sirkulasi buku bekas terpercaya untuk mendukung ekosistem akademik mahasiswa.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 LITERA Digital Library & Hub. All Rights Reserved.</p>
+    </footer>
+
+    <!-- JAVASCRIPT SLIDER -->
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 3;
+        const slider = document.getElementById('heroSlider');
+        const dots = document.querySelectorAll('.dot');
+
+        function updateSlider() {
+            slider.style.transform = `translateX(-${currentSlide * 33.333}%)`;
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlider();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlider();
+        }
+
+        // Jalankan slide otomatis setiap 4 detik
+        setInterval(nextSlide, 4000);
+    </script>
+</body>
+</html>
