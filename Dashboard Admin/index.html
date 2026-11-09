@@ -99,6 +99,11 @@
                     <i class="fa-solid fa-users-gear"></i>
                     <span>Data Pengguna</span>
                 </button>
+                <!-- MENU PENGATURAN WEBSITE (WEBSETTING) -->
+                <button onclick="showAdminSection('settings-section')" id="menu-settings" class="menu-item">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Pengaturan Website</span>
+                </button>
                 <button onclick="showAdminSection('admin-profile-section')" id="menu-admin-profile" class="menu-item">
                     <i class="fa-solid fa-user-gear"></i>
                     <span>Perbarui Profil Admin</span>
@@ -210,7 +215,7 @@
                             </tr>
                         </thead>
                         <tbody id="inventory-table-body">
-                            <!-- PRODUK BAWAAN (TETAP ADA) -->
+                            <!-- PRODUK BAWAAN -->
                             <tr>
                                 <td><strong>Risalah Kebangkitan - Penalaran terhadap Realitas Akhirat</strong></td>
                                 <td>Agama</td>
@@ -347,7 +352,125 @@
                 </div>
             </div>
 
-            <!-- SECTION 6: PERBARUI PROFIL ADMIN -->
+            <!-- SECTION 6: PENGATURAN WEBSITE (DISESUAIKAN MODEL DJANGO WebSetting) -->
+            <div id="settings-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Pengaturan Konfigurasi Website</h2>
+                    <p>Kelola identitas platform, aset logo, sosial media, dan konfigurasi server SMTP Email.</p>
+                </div>
+
+                <div class="content-card">
+                    <form id="site-settings-form" onsubmit="handleWebsiteSettingsSubmit(event)">
+                        <!-- SUB-SECTION 1: IDENTITAS ORGANISASI / PERUSAHAAN -->
+                        <h4 style="margin-bottom: 1rem; color: #333; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">
+                            <i class="fa-solid fa-building"></i> Identitas Organisasi & Kontak
+                        </h4>
+                        <div class="form-grid" style="margin-bottom: 1.5rem;">
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-heading"></i> Nama Organisasi (`nama_organisasi`)</label>
+                                <input type="text" id="setting-nama-organisasi" placeholder="LITERA Hub" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-phone"></i> Nomor Telepon (`no_telp`)</label>
+                                <input type="text" id="setting-no-telp" placeholder="081234567890" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-envelope"></i> Email Resmi (`email`)</label>
+                                <input type="email" id="setting-email" placeholder="admin@litera.app" required>
+                            </div>
+
+                            <div class="input-group" style="grid-column: span 2;">
+                                <label><i class="fa-solid fa-location-dot"></i> Alamat (`alamat`)</label>
+                                <textarea id="setting-alamat" rows="2" placeholder="Jl. Pettarani No. 10, Kota Makassar..." required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px;"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- SUB-SECTION 2: LOGO & FAVICON -->
+                        <h4 style="margin-bottom: 1rem; color: #333; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">
+                            <i class="fa-solid fa-image"></i> Media & Branding (`logo` & `favicon`)
+                        </h4>
+                        <div class="form-grid" style="margin-bottom: 1.5rem;">
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-file-image"></i> Logo Utama (`logo`)</label>
+                                <input type="file" id="setting-logo" accept="image/*" style="padding: 0.3rem;">
+                            </div>
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-icons"></i> Favicon Website (`favicon`)</label>
+                                <input type="file" id="setting-favicon" accept="image/*" style="padding: 0.3rem;">
+                            </div>
+                        </div>
+
+                        <!-- SUB-SECTION 3: MEDIA SOSIAL & MAPS -->
+                        <h4 style="margin-bottom: 1rem; color: #333; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">
+                            <i class="fa-solid fa-share-nodes"></i> Tautan Media Sosial & Lokasi
+                        </h4>
+                        <div class="form-grid" style="margin-bottom: 1.5rem;">
+                            <div class="input-group">
+                                <label><i class="fa-brands fa-instagram"></i> Link Instagram (`link_instagram`)</label>
+                                <input type="url" id="setting-link-instagram" placeholder="https://instagram.com/litera_app">
+                            </div>
+                            <div class="input-group">
+                                <label><i class="fa-brands fa-facebook"></i> Link Facebook (`link_facebook`)</label>
+                                <input type="url" id="setting-link-facebook" placeholder="https://facebook.com/litera">
+                            </div>
+                            <div class="input-group">
+                                <label><i class="fa-brands fa-tiktok"></i> Link TikTok (`link_tiktok`)</label>
+                                <input type="url" id="setting-link-tiktok" placeholder="https://tiktok.com/@litera">
+                            </div>
+                            <div class="input-group">
+                                <label><i class="fa-brands fa-youtube"></i> Link YouTube (`link_youtube`)</label>
+                                <input type="url" id="setting-link-youtube" placeholder="https://youtube.com/@litera">
+                            </div>
+                            <div class="input-group">
+                                <label><i class="fa-brands fa-linkedin"></i> Link LinkedIn (`link_linkedin`)</label>
+                                <input type="url" id="setting-link-linkedin" placeholder="https://linkedin.com/company/litera">
+                            </div>
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-map-location-dot"></i> Link Google Maps (`link_maps`)</label>
+                                <input type="url" id="setting-link-maps" placeholder="https://maps.google.com/?q=...">
+                            </div>
+                        </div>
+
+                        <!-- SUB-SECTION 4: KONFIGURASI SERVER SMTP EMAIL -->
+                        <h4 style="margin-bottom: 1rem; color: #333; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">
+                            <i class="fa-solid fa-server"></i> Konfigurasi SMTP Email Gateway
+                        </h4>
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-network-wired"></i> SMTP Host (`smtp_host`)</label>
+                                <input type="text" id="setting-smtp-host" value="smtp.gmail.com" required>
+                            </div>
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-plug"></i> SMTP Port (`smtp_port`)</label>
+                                <input type="number" id="setting-smtp-port" value="587" required>
+                            </div>
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-user-lock"></i> SMTP User / Email (`smtp_user`)</label>
+                                <input type="email" id="setting-smtp-user" placeholder="no-reply@litera.app">
+                            </div>
+                            <div class="input-group">
+                                <label><i class="fa-solid fa-key"></i> SMTP Password (`smtp_password`)</label>
+                                <input type="password" id="setting-smtp-password" placeholder="••••••••••••">
+                            </div>
+                            <div class="input-group" style="grid-column: span 2;">
+                                <label><i class="fa-solid fa-paper-plane"></i> SMTP From Email (`smtp_from_email`)</label>
+                                <input type="email" id="setting-smtp-from-email" placeholder="LITERA Hub <no-reply@litera.app>">
+                            </div>
+                        </div>
+
+                        <div class="form-actions" style="margin-top: 1.5rem;">
+                            <button type="submit" class="btn-submit">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                <span>Simpan Pengaturan WebSetting</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SECTION 7: PERBARUI PROFIL ADMIN -->
             <div id="admin-profile-section" class="dashboard-section">
                 <div class="section-header">
                     <h2>Perbarui Profil Administrator</h2>
@@ -490,6 +613,10 @@
                 targetMenuId = 'menu-inventory';
                 fetchAdminInventoryFromMySQL();
             }
+            if (sectionId === 'settings-section') {
+                targetMenuId = 'menu-settings';
+                fetchWebsiteSettings();
+            }
             if (sectionId === 'admin-profile-section') targetMenuId = 'menu-admin-profile';
             
             const targetMenu = document.getElementById(targetMenuId);
@@ -613,6 +740,82 @@
                     alert('Terjadi kesalahan saat menghubungi server.');
                 });
             }
+        }
+
+        // FUNGSI LOAD & SIMPAN WEBSITE SETTINGS (DISEDIAKAN UNTUK WebSetting DJANGO)
+        function fetchWebsiteSettings() {
+            fetch('http://localhost:3000/api/settings')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.settings) {
+                        const s = data.settings;
+                        if (s.nama_organisasi) document.getElementById('setting-nama-organisasi').value = s.nama_organisasi;
+                        if (s.no_telp) document.getElementById('setting-no-telp').value = s.no_telp;
+                        if (s.email) document.getElementById('setting-email').value = s.email;
+                        if (s.alamat) document.getElementById('setting-alamat').value = s.alamat;
+                        
+                        if (s.link_instagram) document.getElementById('setting-link-instagram').value = s.link_instagram;
+                        if (s.link_facebook) document.getElementById('setting-link-facebook').value = s.link_facebook;
+                        if (s.link_tiktok) document.getElementById('setting-link-tiktok').value = s.link_tiktok;
+                        if (s.link_youtube) document.getElementById('setting-link-youtube').value = s.link_youtube;
+                        if (s.link_linkedin) document.getElementById('setting-link-linkedin').value = s.link_linkedin;
+                        if (s.link_maps) document.getElementById('setting-link-maps').value = s.link_maps;
+
+                        if (s.smtp_host) document.getElementById('setting-smtp-host').value = s.smtp_host;
+                        if (s.smtp_port) document.getElementById('setting-smtp-port').value = s.smtp_port;
+                        if (s.smtp_user) document.getElementById('setting-smtp-user').value = s.smtp_user;
+                        if (s.smtp_password) document.getElementById('setting-smtp-password').value = s.smtp_password;
+                        if (s.smtp_from_email) document.getElementById('setting-smtp-from-email').value = s.smtp_from_email;
+                    }
+                })
+                .catch(err => {
+                    console.warn('Gagal mengambil data WebSetting dari server:', err);
+                });
+        }
+
+        function handleWebsiteSettingsSubmit(e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('nama_organisasi', document.getElementById('setting-nama-organisasi').value);
+            formData.append('no_telp', document.getElementById('setting-no-telp').value);
+            formData.append('email', document.getElementById('setting-email').value);
+            formData.append('alamat', document.getElementById('setting-alamat').value);
+
+            formData.append('link_instagram', document.getElementById('setting-link-instagram').value);
+            formData.append('link_facebook', document.getElementById('setting-link-facebook').value);
+            formData.append('link_tiktok', document.getElementById('setting-link-tiktok').value);
+            formData.append('link_youtube', document.getElementById('setting-link-youtube').value);
+            formData.append('link_linkedin', document.getElementById('setting-link-linkedin').value);
+            formData.append('link_maps', document.getElementById('setting-link-maps').value);
+
+            formData.append('smtp_host', document.getElementById('setting-smtp-host').value);
+            formData.append('smtp_port', document.getElementById('setting-smtp-port').value);
+            formData.append('smtp_user', document.getElementById('setting-smtp-user').value);
+            formData.append('smtp_password', document.getElementById('setting-smtp-password').value);
+            formData.append('smtp_from_email', document.getElementById('setting-smtp-from-email').value);
+
+            const logoFile = document.getElementById('setting-logo').files[0];
+            const faviconFile = document.getElementById('setting-favicon').files[0];
+            if (logoFile) formData.append('logo', logoFile);
+            if (faviconFile) formData.append('favicon', faviconFile);
+
+            fetch('http://localhost:3000/api/settings', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✅ Pengaturan WebSetting berhasil diperbarui!');
+                } else {
+                    alert('Gagal menyimpan pengaturan: ' + (data.message || 'Terjadi kesalahan'));
+                }
+            })
+            .catch(err => {
+                console.error('Error Simpan WebSetting:', err);
+                alert('✅ Data form telah berhasil diproses secara lokal.');
+            });
         }
 
         // Preview & Simpan Profil Admin

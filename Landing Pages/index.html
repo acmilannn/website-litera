@@ -4,32 +4,161 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LITERA Hub - Digital Library & Book Hub</title>
-    <!-- Menghubungkan ke CSS terpisah -->
+    
+    <!-- Link CSS -->
     <link rel="stylesheet" href="style.css">
-    <!-- FontAwesome Icons & Google Fonts -->
     <link rel="stylesheet" href="halamanpages.css">
+    <link rel="stylesheet" href="../Katalog/katalog.css">
+    
+    <!-- FontAwesome Icons & Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Modifikasi Tambahan Integrasi Guest & Modal */
+        .auth-nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .btn-guest-login {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--litera-dark, #1e293b);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .btn-guest-login:hover {
+            background-color: var(--litera-surface, #f1f5f9);
+        }
+        .btn-guest-register {
+            padding: 0.5rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: var(--litera-red, #2563eb);
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn-guest-register:hover {
+            opacity: 0.9;
+        }
+
+        /* Modal Pop-up Auth Prompt for Guest */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-card {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .modal-icon {
+            font-size: 2.5rem;
+            color: var(--litera-red, #2563eb);
+            margin-bottom: 1rem;
+        }
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--litera-black, #0f172a);
+        }
+        .modal-desc {
+            font-size: 0.875rem;
+            color: var(--litera-gray, #64748b);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .btn-modal-cancel {
+            flex: 1;
+            padding: 0.625rem;
+            border: 1px solid #cbd5e1;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-modal-login {
+            flex: 1;
+            padding: 0.625rem;
+            background: var(--litera-red, #2563eb);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
 
     <!-- NAVBAR MAIN -->
     <header>
         <div class="nav-container">
-            <div class="brand" onclick="location.href='index.html'">
+            <div class="brand" onclick="navigate('home')">
                 <img src="../foto/logo.jpeg" alt="Logo Litera" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=100&auto=format&fit=crop&q=80'">
                 <div class="brand-text">
                     <h1>LITERA</h1>
                     <span>Digital Library & Hub</span>
                 </div>
             </div>
+
+            <!-- Global Search Bar -->
+            <div class="search-container" style="flex: 1; max-width: 380px; margin: 0 1rem;">
+                <div class="search-wrapper" style="position: relative; display: flex; align-items: center;">
+                    <span class="search-icon" style="position: absolute; left: 12px; color: #94a3b8;"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" id="global-search" oninput="handleSearch(this.value)" placeholder="Cari judul buku, penulis, jurusan..." class="search-input" style="width: 100%; padding-left: 36px; padding-right: 12px; height: 38px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.875rem;">
+                </div>
+            </div>
+
             <div class="nav-links">
+                <a href="#katalog-section" onclick="navigate('home')">Katalog</a>
                 <a href="#artikel">Artikel</a>
                 <a href="#tentang-kami">Tentang Kami</a>
-                <a href="login.html" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
+                <button onclick="promptGuestLogin('Keranjang Belanja')" class="icon-btn" style="background: none; border: none; cursor: pointer; font-size: 1.1rem; color: #334155; position: relative;">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span id="cart-badge" class="badge" style="position: absolute; top: -6px; right: -8px; background: #2563eb; color: #fff; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;">0</span>
+                </button>
+                <div class="auth-nav-buttons">
+                    <a href="/login/index.html" class="btn-guest-login"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
+                    <a href="/login/index.html?register=true" class="btn-guest-register">Daftar</a>
+                </div>
             </div>
         </div>
     </header>
 
+    
     <!-- HERO SLIDER SECTION (Bergerak Otomatis) -->
     <section class="hero-slider-wrapper">
         <div class="hero-slider" id="heroSlider">
@@ -39,7 +168,7 @@
                     <h2>Pusat Literasi & <span>Titip Jual Buku</span> Mahasiswa</h2>
                     <p>Platform digital terpadu untuk mencari referensi akademik dan memutar kembali buku bekas berkualitas di wilayah Makassar dan sekitarnya.</p>
                     <div class="hero-btns">
-                        <a href="login.html" class="btn-primary"><i class="fa-solid fa-rocket"></i> Mulai Sekarang</a>
+                        <a href="#katalog-section" class="btn-primary"><i class="fa-solid fa-rocket"></i> Jelajahi Katalog</a>
                     </div>
                 </div>
                 <div class="hero-image">
@@ -53,7 +182,7 @@
                     <h2>Barter & Jual Buku <span>Mudah dan Aman</span></h2>
                     <p>Sistem verifikasi Quality Control (QC) fisik memastikan kondisi buku bekas perkuliahan tetap layak baca bagi pembeli berikutnya.</p>
                     <div class="hero-btns">
-                        <a href="login.html" class="btn-primary"><i class="fa-solid fa-hand-holding-hand"></i> Ajukan Titip Jual</a>
+                        <a href="javascript:void(0)" onclick="promptGuestLogin('Titip Jual Buku')" class="btn-primary"><i class="fa-solid fa-hand-holding-hand"></i> Ajukan Titip Jual</a>
                     </div>
                 </div>
                 <div class="hero-image">
@@ -84,58 +213,151 @@
         </div>
     </section>
 
-    <!-- SEKSI ARTIKEL AKADEMIK (DIKLIK DARI NAVBAR) -->
+    <!-- MAIN KATALOG SECTION -->
+    <main class="container" id="katalog-section" style="padding-top: 2rem; padding-bottom: 2rem;">
+<!-- SUB NAVIGASI: KATEGORI BUKU KATALOG -->
+    <nav class="sub-nav" style="background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 0.5rem 0;">
+        <div class="container sub-nav-content" style="display: flex; gap: 0.75rem; overflow-x: auto;">
+            <button onclick="filterCatNav('All', event)" id="nav-cat-all" class="nav-item active">Semua Koleksi</button>
+            <button onclick="filterCatNav('Fiksi', event)" id="nav-cat-fiksi" class="nav-item">Novel & Fiksi</button>
+            <button onclick="filterCatNav('Filsafat', event)" id="nav-cat-filsafat" class="nav-item">Filsafat & Self-Improvement</button>
+            <button onclick="filterCatNav('Agama', event)" id="nav-cat-agama" class="nav-item">Agama & Studi Islam</button>
+            <button onclick="filterCatNav('Bisnis', event)" id="nav-cat-bisnis" class="nav-item">Bisnis & Manajemen</button>
+        </div>
+    </nav>
+
+        
+        <!-- PAGE 1: HOME KATALOG GRID -->
+        <div id="page-home">
+            <div class="bundle-card" style="margin-bottom: 2rem;">
+                <div>
+                    <span class="badge-bundle">PAKET BUNDLING HEMAT</span>
+                    <h3 class="bundle-title">Paket Cerdas Bisnis Digital (3 Buku Akademik & Filsafat)</h3>
+                    <p class="bundle-sub">Dapatkan Filsafat Sains, Risalah Kebangkitan, & Filosofi Teras sekaligus!</p>
+                </div>
+                <div class="bundle-pricing">
+                    <div>
+                        <span class="price-old">Rp 150.000</span>
+                        <span class="price-new">Rp 120.000</span>
+                    </div>
+                    <button onclick="promptGuestLogin('Pembelian Paket Bundling')" class="btn-dark">Beli Paket</button>
+                </div>
+            </div>
+
+            <!-- GRID PRODUK DARI MYSQL / FALLBACK -->
+            <div id="product-grid" class="product-grid">
+                <!-- Dirender secara dinamis oleh JavaScript -->
+            </div>
+        </div>
+
+        <!-- PAGE 2: PRODUCT DETAIL (PDP INTERNAL IN LANDING PAGE) -->
+        <div id="page-pdp" class="hidden pdp-container">
+            <button onclick="navigate('home')" class="btn-back" style="margin-bottom: 1rem; border: none; background: transparent; cursor: pointer; color: #2563eb; font-weight: 600;">
+                <i class="fa-solid fa-arrow-left"></i> <span>Kembali ke Landing Page</span>
+            </button>
+
+            <div class="pdp-card">
+                <div class="pdp-gallery">
+                    <div class="pdp-img-box">
+                        <img id="pdp-img" src="" alt="Detail Buku">
+                    </div>
+                </div>
+
+                <div class="pdp-details">
+                    <div>
+                        <div class="pdp-tags">
+                            <span id="pdp-category" class="badge-tag">Kategori</span>
+                            <span id="pdp-grade" class="badge-grade">Grade A</span>
+                        </div>
+                        <h1 id="pdp-title" class="pdp-title">Judul Buku</h1>
+                        <p id="pdp-author" class="pdp-author">Penulis</p>
+                        <div id="pdp-rating" style="color: #f59e0b; margin-top: 0.5rem; font-size: 0.875rem;">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star-half-stroke"></i>
+                            <span style="color: var(--litera-dark); margin-left: 0.5rem; font-weight: 600;">4.8 / 5.0 (Ulasan Terverifikasi)</span>
+                        </div>
+                    </div>
+
+                    <div class="pdp-price-box">
+                        <span id="pdp-price" class="pdp-price">Rp 0</span>
+                    </div>
+
+                    <div>
+                        <h4 class="pdp-section-title">Deskripsi & Catatan Fisik</h4>
+                        <p id="pdp-desc" class="pdp-desc">Deskripsi buku...</p>
+                    </div>
+
+                    <div style="padding-top: 1rem; border-top: 1px solid var(--litera-surface);">
+                        <button onclick="promptGuestLogin('Tambah ke Keranjang')" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 0.875rem;">
+                            <i class="fa-solid fa-cart-plus"></i> <span>Tambah ke Keranjang</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- SEKSI ARTIKEL AKADEMIK -->
     <section class="articles-section" id="artikel">
         <div class="container">
             <div class="section-title">
-                <h3>Artikel & Publikasi Akademik</h3>
-                <p>Panduan penulisan tesis, metode penelitian, dan wawasan literasi digital mahasiswa.</p>
+                <h3>Artikel & Publikasi Pilihan</h3>
+                <p>Wawasan seputar budaya membaca, inspirasi literasi, dan kisah inspiratif dunia buku.</p>
             </div>
 
-            <!-- GRID KARTU ARTIKEL -->
             <div class="articles-grid">
                 <!-- ARTIKEL 1 -->
                 <article class="article-card">
-                    <div class="article-badge blue">Akademik</div>
-                    <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&auto=format&fit=crop&q=80" alt="Panduan Tesis" class="article-img">
+                    <div class="article-badge blue">Opini</div>
+                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500&auto=format&fit=crop&q=80" alt="Aroma Buku Baru" class="article-img">
                     <div class="article-content">
-                        <span class="article-date"><i class="fa-regular fa-calendar"></i> 28 Okt 2026</span>
-                        <h4>Panduan Penulisan Tesis Standar Internasional</h4>
-                        <p>Langkah demi langkah menyusun struktur bab, tinjauan pustaka, dan metodologi riset akademik...</p>
+                        <span class="article-date"><i class="fa-regular fa-calendar"></i> 08 Nov 2026</span>
+                        <h4>Hanya untuk Menikmati Aroma Buku Baru pun Ikut-ikutan Dibegal...</h4>
+                        <p>Refleksi realitas sosial dan kecintaan terhadap sensasi lembaran buku baru di tengah tantangan zaman...</p>
                         <div class="article-author">
-                            <i class="fa-regular fa-user"></i> Dr. Admin Thesis
+                            <i class="fa-regular fa-user"></i> Kompasiana Hub
                         </div>
-                        <button class="btn-read-more" onclick="alert('📖 Membuka Artikel: Panduan Penulisan Tesis Standar Internasional')">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></button>
+                        <a href="https://www.kompasiana.com/agushadisaja/6aec2054c925c47c6e18a3c9/hanya-untuk-menikmati-aroma-buku-baru-pun-ikut-ikutan-dibegal-di-negara-ini" target="_blank" rel="noopener noreferrer" class="btn-read-more" style="text-decoration: none; display: inline-block; margin-top: 10px;">
+                            Baca Artikel Asli <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
                     </div>
                 </article>
 
                 <!-- ARTIKEL 2 -->
                 <article class="article-card">
-                    <div class="article-badge green">Tutorial</div>
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500&auto=format&fit=crop&q=80" alt="Analisis Data Python" class="article-img">
+                    <div class="article-badge green">Inspirasi</div>
+                    <img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=500&auto=format&fit=crop&q=80" alt="Buku Wajib Dibaca" class="article-img">
                     <div class="article-content">
-                        <span class="article-date"><i class="fa-regular fa-calendar"></i> 25 Okt 2026</span>
-                        <h4>Strategi Analisis Data Menggunakan Python</h4>
-                        <p>Teknik pengolahan dataset e-commerce dan sentiment analysis untuk tugas akhir dan skripsi...</p>
+                        <span class="article-date"><i class="fa-regular fa-calendar"></i> 08 Nov 2026</span>
+                        <h4>Buku yang Wajib Dibaca: Inspirasi dari Lembar ke Lembar</h4>
+                        <p>Rekomendasi bahan bacaan pilihan yang mampu memperluas wawasan dan pola pikir kritis mahasiswa...</p>
                         <div class="article-author">
-                            <i class="fa-regular fa-user"></i> Tim Riset Edu
+                            <i class="fa-regular fa-user"></i> Literasi Kita
                         </div>
-                        <button class="btn-read-more" onclick="alert('📖 Membuka Artikel: Strategi Analisis Data Menggunakan Python')">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></button>
+                        <a href="https://ruangbuku.id/artikel/buku-yang-wajib-dibaca-inspirasi-dari-lembar/" target="_blank" rel="noopener noreferrer" class="btn-read-more" style="text-decoration: none; display: inline-block; margin-top: 10px;">
+                            Baca Artikel Asli <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
                     </div>
                 </article>
 
                 <!-- ARTIKEL 3 -->
                 <article class="article-card">
-                    <div class="article-badge blue">Penelitian</div>
-                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&auto=format&fit=crop&q=80" alt="Literasi Digital" class="article-img">
+                    <div class="article-badge blue">Tokoh</div>
+                    <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=500&auto=format&fit=crop&q=80" alt="Anak IQ 141" class="article-img">
                     <div class="article-content">
-                        <span class="article-date"><i class="fa-regular fa-calendar"></i> 20 Okt 2026</span>
-                        <h4>Dinamika Transaksi Saling Pinjam & Barter Buku</h4>
-                        <p>Studi kasus adaptasi platform C2C marketplace buku bekas di kalangan mahasiswa perguruan tinggi...</p>
+                        <span class="article-date"><i class="fa-regular fa-calendar"></i> 08 Nov 2026</span>
+                        <h4>Cerita Anak 5 Tahun Punya IQ 141, Sudah Baca 3.000 Buku Dari Kecil</h4>
+                        <p>Kisah menakjubkan tentang kekuatan kebiasaan membaca sejak dini dan stimulasi literasi keluarga...</p>
                         <div class="article-author">
-                            <i class="fa-regular fa-user"></i> Litera
+                            <i class="fa-regular fa-user"></i> Redaksi Kompasiana
                         </div>
-                        <button class="btn-read-more" onclick="alert('📖 Membuka Artikel: Dinamika Transaksi Saling Pinjam')">Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i></button>
+                        <a href="https://health.detik.com/berita-detikhealth/d-8737715/cerita-anak-5-tahun-punya-iq-141-sudah-baca-3-000-buku-dari-kecil" target="_blank" rel="noopener noreferrer" class="btn-read-more" style="text-decoration: none; display: inline-block; margin-top: 10px;">
+                            Baca Artikel Asli <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
                     </div>
                 </article>
             </div>
@@ -143,46 +365,288 @@
     </section>
 
     <!-- SEKSI TENTANG KAMI -->
-    <section class="about-section" id="tentang-kami" style="padding: 4rem 2rem; background: #f8fafc;">
-        <div class="container" style="max-width: 1000px; margin: 0 auto; text-align: center;">
+    <section class="about-section" id="tentang-kami">
+        <div class="container">
             <div class="section-title">
                 <h3>Tentang LITERA Hub</h3>
-                <p>Platform perpustakaan digital dan hub sirkulasi buku bekas terpercaya untuk mendukung ekosistem akademik mahasiswa.</p>
+                <p>Platform perpustakaan digital dan hub sirkulasi buku terpercaya untuk mendukung ekosistem akademik mahasiswa.</p>
+            </div>
+
+            <!-- TEKS HERO / INTRO -->
+            <div class="about-hero-card">
+                <h4>Menghubungkan Pembaca, Memutar Ekosistem Literasi</h4>
+                <p>
+                    <strong>LITERA Hub</strong> hadir sebagai solusi marketplace dan <em>consignment</em> (titip jual) buku bekas berkualitas maupun buku baru. Kami memfasilitasi mahasiswa di wilayah Makassar, Maros dan Gowa untuk memutar kembali buku perkuliahan, referensi riset, serta karya literatur yang berharga dengan verifikasi Quality Control (QC) fisik secara mendalam.
+                </p>
+            </div>
+
+            <!-- LANDSCAPE FEATURE CARDS -->
+            <div class="about-features-landscape">
+                <div class="about-card">
+                    <div class="card-icon"><i class="fa-solid fa-square-check"></i></div>
+                    <h5>Standar Kualitas Ketat</h5>
+                    <p>Penilaian fisik transparan untuk menjamin buku bebas dari kerusakan parah atau halaman hilang.</p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
+                    <h5>Sirkulasi Buku Berkelanjutan</h5>
+                    <p>Mendukung gerakan ramah lingkungan dengan memanfaatkan kembali buku kuliah agar bermanfaat bagi generasi penerus.</p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <h5>Dukungan Akses Akademik</h5>
+                    <p>Menyediakan repositori artikel, jurnal, dan panduan metodologi riset secara gratis untuk menunjang studi.</p>
+                </div>
+            </div>
+
+            <!-- STATISTIK BAR -->
+            <div class="about-stats-bar">
+                <div class="stat-item-box">
+                    <h5>100%</h5>
+                    <p>Verifikasi QC Fisik</p>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item-box">
+                    <h5>Aman</h5>
+                    <p>Sistem Titip Jual</p>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item-box">
+                    <h5>Hemat</h5>
+                    <p>Harga Terjangkau</p>
+                </div>
             </div>
         </div>
     </section>
+
+    <!-- MODAL GUEST AUTH INTERCEPTOR -->
+    <div id="guest-auth-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-icon">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h3 class="modal-title">Akses Terbatas untuk Guest</h3>
+            <p id="modal-guest-text" class="modal-desc">
+                Silakan masuk atau buat akun LITERA terlebih dahulu untuk menggunakan fitur ini.
+            </p>
+            <div class="modal-actions">
+                <button onclick="closeGuestModal()" class="btn-modal-cancel">Nanti Saja</button>
+                <a href="/login/index.html" class="btn-modal-login">Masuk Sekarang</a>
+            </div>
+        </div>
+    </div>
 
     <!-- FOOTER -->
     <footer>
         <p>&copy; 2026 LITERA Digital Library & Hub. All Rights Reserved.</p>
     </footer>
 
-    <!-- JAVASCRIPT SLIDER -->
+    <!-- JAVASCRIPT SLIDER & LOGIKA KATALOG LANDING PAGE -->
     <script>
-        let currentSlide = 0;
-        const totalSlides = 3;
-        const slider = document.getElementById('heroSlider');
-        const dots = document.querySelectorAll('.dot');
+       // --- 1. LOGIKA HERO SLIDER (OTOMATIS & RESPONSIF) ---
+let currentSlide = 0;
+const totalSlides = 3;
+const slider = document.getElementById('heroSlider');
+const dots = document.querySelectorAll('.dot');
+let slideInterval = null;
 
-        function updateSlider() {
-            slider.style.transform = `translateX(-${currentSlide * 33.333}%)`;
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentSlide);
+// Fungsi untuk menggeser ke slide tertentu
+function updateSlider() {
+    if (!slider) return;
+    
+    // Kalkulasi persentase geser: (100 / 3) = 33.33333% per slide
+    const percentage = currentSlide * (100 / totalSlides);
+    slider.style.transform = `translateX(-${percentage}%)`;
+    
+    // Update status dot aktif
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+    });
+}
+
+// Fungsi pindah ke slide berikutnya
+function nextSlide() {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    updateSlider();
+}
+
+// Fungsi klik tombol dot
+function goToSlide(index) {
+    currentSlide = index;
+    updateSlider();
+    resetTimer(); // Reset timer saat user mengklik manual
+}
+
+// Jalankan slider otomatis
+function startTimer() {
+    if (!slideInterval) {
+        slideInterval = setInterval(nextSlide, 2000); // 4000 ms = 4 detik
+    }
+}
+
+// Reset timer otomatis saat interaksi manual
+function resetTimer() {
+    clearInterval(slideInterval);
+    slideInterval = null;
+    startTimer();
+}
+
+// JALANKAN SAAT HALAMAN SELESAI DIMUAT
+document.addEventListener('DOMContentLoaded', () => {
+    updateSlider();
+    startTimer();
+
+    // Hentikan sementara saat kursor diarahkan ke slider (Hover)
+    const sliderWrapper = document.querySelector('.hero-slider-wrapper');
+    if (sliderWrapper) {
+        sliderWrapper.addEventListener('mouseenter', () => {
+            clearInterval(slideInterval);
+            slideInterval = null;
+        });
+        sliderWrapper.addEventListener('mouseleave', () => {
+            startTimer();
+        });
+    }
+});
+
+        // --- 2. LOGIKA KATALOG PRODUK & API FETCH ---
+        let defaultBooks = [
+            { id: 1, title: "Risalah Kebangkitan - Penalaran terhadap Realitas Akhirat", author: "Badiuzzaman Said Nursi", category: "Agama", grade: "Grade B+ (Layak Baca)", price: 50000, rating: 4.8, img:"../foto/risalah kebangkitan.jpeg", desc: "Judul: Risalah Kebangkitan – Penalaran terhadap Realitas Akhirat\nPenulis: Badiuzzaman Said Nursi\nKondisi Fisik: Grade B+" },
+            { id: 2, title: "Namaku Alam", author: "Leila S. Chudori", category: "Fiksi", grade: "Grade A (Mulus)", price: 65000, rating: 4.9, img: "../foto/namaku alam.jpeg", desc: "Judul: Namaku Alam\nPenulis: Leila S. Chudori\nKondisi Fisik: Grade A" },
+            { id: 3, title: "Animal Farm (Republik Hewan)", author: "George Orwell", category: "Fiksi", grade: "Grade A (Mulus)", price: 45000, rating: 4.7, img: "../foto/animal farm.jpeg", desc: "Judul: Animal Farm\nPenulis: George Orwell\nKondisi Fisik: Grade A" },
+            { id: 4, title: "Angel & Demon", author: "Helena Abidin, Suhartono C., Timoteus T.", category: "Bisnis", grade: "Grade A (Mulus)", price: 50000, rating: 4.6, img: "../foto/angel & demon.jpeg", desc: "Judul: Angel & Demon\nPenulis: Helena Abidin dkk" },
+            { id: 5, title: "Filsafat Sains - Dari Newton, Einstein hingga Sains-Data", author: "Dimitri Mahayana", category: "Filsafat", grade: "Grade B (Layak)", price: 50000, rating: 4.5, img: "../foto/filsafat sains.jpeg", desc: "Judul: Filsafat Sains\nPenulis: Dimitri Mahayana" },
+            { id: 6, title: "Filosofi Teras - Filsafat Yunani-Romawi Kuno", author: "Henry Manampiring", category: "Filsafat", grade: "Grade A (Mulus)", price: 55000, rating: 5.0, img: "../foto/filosofi teras.jpeg", desc: "Judul: Filosofi Teras\nPenulis: Henry Manampiring" },
+            { id: 7, title: "Tentang Kamu", author: "Tere Liye", category: "Fiksi", grade: "Grade B+ (Layak)", price: 50000, rating: 4.8, img: "../foto/tentang kamu.jpeg", desc: "Judul: Tentang Kamu\nPenulis: Tere Liye" },
+            { id: 8, title: "Pulang", author: "Leila S. Chudori", category: "Fiksi", grade: "Grade A (Mulus)", price: 60000, rating: 4.9, img: "../foto/pulang.jpeg", desc: "Judul: Pulang\nPenulis: Leila S. Chudori" },
+            { id: 9, title: "Hujan", author: "Tere Liye", category: "Fiksi", grade: "Grade A (Mulus)", price: 50000, rating: 4.9, img: "../foto/hujan.jpeg", desc: "Judul: Hujan\nPenulis: Tere Liye" }
+        ];
+
+        let books = [];
+        let selectedPdp = null;
+
+        window.onload = function() {
+            fetchBooksFromBackend();
+        };
+
+        function fetchBooksFromBackend() {
+            fetch('http://localhost:3000/api/books')
+                .then(res => res.json())
+                .then(result => {
+                    const dbData = result.books || result.data;
+                    let dbBooks = [];
+                    if (result.success && dbData && dbData.length > 0) {
+                        dbBooks = dbData.map(b => ({
+                            id: b.id,
+                            title: b.title,
+                            author: b.author,
+                            category: b.category,
+                            grade: b.grade,
+                            price: Number(b.price),
+                            rating: b.rating || 4.8,
+                            img: b.img,
+                            desc: b.description || b.desc || 'Deskripsi belum tersedia.'
+                        }));
+                    }
+                    books = [...dbBooks, ...defaultBooks];
+                    renderProducts(books);
+                })
+                .catch(err => {
+                    books = defaultBooks;
+                    renderProducts(books);
+                });
+        }
+
+        function navigate(page) {
+            ['home', 'pdp'].forEach(p => {
+                const elem = document.getElementById(`page-${p}`);
+                if (elem) elem.classList.add('hidden');
+            });
+            document.getElementById(`page-${page}`).classList.remove('hidden');
+        }
+
+        function filterCatNav(category, evt) {
+            const navItems = document.querySelectorAll('.sub-nav .nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            
+            if (evt && evt.target) {
+                evt.target.classList.add('active');
+            }
+
+            if (category === 'All') {
+                renderProducts(books);
+            } else {
+                const filtered = books.filter(b => b.category === category);
+                renderProducts(filtered);
+            }
+        }
+
+        function handleSearch(query) {
+            const q = query.toLowerCase();
+            const filtered = books.filter(b => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q));
+            renderProducts(filtered);
+        }
+
+        function renderProducts(list) {
+            const grid = document.getElementById('product-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            if (list.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 2rem;">Buku yang dicari tidak ditemukan.</p>';
+                return;
+            }
+
+            list.forEach(b => {
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <div>
+                            <div class="product-img-wrapper" onclick="openPdp('${b.id}')">
+                                <img src="${b.img}" alt="${b.title}">
+                                <span class="badge-cat">${b.category}</span>
+                                <span class="badge-grade">${b.grade}</span>
+                            </div>
+                            <div class="product-info">
+                                <h3 onclick="openPdp('${b.id}')" class="product-title">${b.title}</h3>
+                                <p class="product-author">${b.author}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                                    <span class="product-price">Rp ${b.price.toLocaleString('id-ID')}</span>
+                                    <span style="font-size: 0.75rem; color: #f59e0b; font-weight: 600;"><i class="fa-solid fa-star"></i> ${b.rating}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-action">
+                            <button onclick="promptGuestLogin('Tambah ke Keranjang')" class="btn-secondary">+ Keranjang</button>
+                        </div>
+                    </div>
+                `;
             });
         }
 
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % totalSlides;
-            updateSlider();
+        function openPdp(id) {
+            selectedPdp = books.find(b => String(b.id) === String(id));
+            if (!selectedPdp) return;
+            document.getElementById('pdp-img').src = selectedPdp.img;
+            document.getElementById('pdp-title').innerText = selectedPdp.title;
+            document.getElementById('pdp-author').innerText = selectedPdp.author;
+            document.getElementById('pdp-category').innerText = selectedPdp.category;
+            document.getElementById('pdp-grade').innerText = selectedPdp.grade;
+            document.getElementById('pdp-price').innerText = `Rp ${selectedPdp.price.toLocaleString('id-ID')}`;
+            document.getElementById('pdp-desc').innerText = selectedPdp.desc;
+            navigate('pdp');
         }
 
-        function goToSlide(index) {
-            currentSlide = index;
-            updateSlider();
+        // --- 3. MODAL GUEST AUTH PROMPT ---
+        function promptGuestLogin(featureName) {
+            const modal = document.getElementById('guest-auth-modal');
+            const desc = document.getElementById('modal-guest-text');
+            desc.innerHTML = `Silakan masuk ke akun LITERA Anda terlebih dahulu untuk menggunakan fitur <strong>${featureName}</strong>.`;
+            modal.classList.add('active');
         }
 
-        // Jalankan slide otomatis setiap 4 detik
-        setInterval(nextSlide, 4000);
+        function closeGuestModal() {
+            document.getElementById('guest-auth-modal').classList.remove('active');
+        }
     </script>
 </body>
 </html>
