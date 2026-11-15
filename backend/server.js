@@ -7,36 +7,42 @@ const midtransClient = require('midtrans-client');
 const app = express();
 const PORT = 3000;
 
-// Middleware (Limit 10mb untuk foto Base64)
+// Middleware (Limit 25mb untuk foto Base64 buku & logo)
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ limit: '25mb', extended: true }));
 
 // ==========================================
 // KONFIGURASI MIDTRANS SANDBOX
 // ==========================================
 const snap = new midtransClient.Snap({
     isProduction: false,
-    serverKey: 'SB-Mid-server-.~NOmm_6qr9YL-WiCEutvsfX',
+    // Pastikan Server Key & Client Key diambil langsung dari Midtrans Sandbox > Settings > Access Keys
+    serverKey: 'SB-Mid-server-GIJP43zbjB80mcujA7FDk10E',
     clientKey: 'Mid-client-ynHTTuKeGHRedSFJ'
 });
 
 // ==========================================
-// 1. KONFIGURASI KONEKSI DATABASE MYSQL (XAMPP)
+// 1. KONFIGURASI KONEKSI DATABASE MYSQL (POOL MODE - ANTI ECONNRESET)
 // ==========================================
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'litera_db'
+    database: 'litera_db',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-db.connect((err) => {
+db.getConnection((err, connection) => {
     if (err) {
         console.error('Gagal terhubung ke MySQL:', err);
     } else {
-        console.log('Berhasil terhubung ke Database MySQL Litera!');
+        console.log('Berhasil terhubung ke Database MySQL Litera (Pool Mode)!');
+        connection.release();
         seedInitialBooks();
+        initWebSettingsTable();
     }
 });
 
@@ -62,6 +68,36 @@ function seedInitialBooks() {
                 else console.log('9 Buku katalog awal berhasil disinkronkan ke MySQL!');
             });
         }
+    });
+}
+
+// Inisialisasi Otomatis Tabel web_settings
+function initWebSettingsTable() {
+    db.query(`
+        CREATE TABLE IF NOT EXISTS web_settings (
+            id INT PRIMARY KEY DEFAULT 1,
+            nama_organisasi VARCHAR(255) DEFAULT 'LITERA',
+            tagline VARCHAR(255) DEFAULT 'Digital Library & Hub',
+            copyright_text VARCHAR(255) DEFAULT '© 2026 LITERA. All Rights Reserved.',
+            no_telp VARCHAR(50),
+            email VARCHAR(100),
+            alamat TEXT,
+            logo LONGTEXT,
+            favicon LONGTEXT,
+            link_facebook VARCHAR(255) DEFAULT 'https://facebook.com',
+            link_instagram VARCHAR(255) DEFAULT 'https://instagram.com',
+            link_tiktok VARCHAR(255) DEFAULT 'https://tiktok.com',
+            link_youtube VARCHAR(255) DEFAULT 'https://youtube.com',
+            link_linkedin VARCHAR(255),
+            link_maps VARCHAR(255),
+            smtp_host VARCHAR(100),
+            smtp_port INT,
+            smtp_user VARCHAR(100),
+            smtp_password VARCHAR(255),
+            smtp_from_email VARCHAR(150)
+        )
+    `, () => {
+        db.query(`INSERT IGNORE INTO web_settings (id, nama_organisasi, tagline, copyright_text) VALUES (1, 'LITERA', 'Digital Library & Hub', '© 2026 LITERA. All Rights Reserved.')`);
     });
 }
 
@@ -146,7 +182,7 @@ app.delete('/api/books/:id', (req, res) => {
     const bookId = req.params.id;
 
     const query = 'DELETE FROM books WHERE id = ?';
-    db.query(query, [bookId], (err, result) => {
+    db.query(query, [bookId], (err) => {
         if (err) {
             console.error('Error saat menghapus buku:', err);
             return res.status(500).json({ success: false, message: 'Gagal menghapus buku dari database' });
@@ -193,7 +229,7 @@ app.post('/api/midtrans-token', async (req, res) => {
             redirect_url: transaction.redirect_url
         });
     } catch (error) {
-        console.error('Midtrans Error:', error.message);
+        console.error('Midtrans Error Detail:', error.ApiResponse || error.message);
         res.status(500).json({
             success: false,
             message: 'Gagal membuat transaksi Midtrans: ' + error.message
@@ -236,7 +272,7 @@ app.post('/api/register', async (req, res) => {
         try {
             const hashedPassword = await bcrypt.hash(password, 10);
             const query = 'INSERT INTO users (nama, email, password, role) VALUES (?, ?, ?, "user")';
-            db.query(query, [nama, email, hashedPassword], (err, result) => {
+            db.query(query, [nama, email, hashedPassword], (err) => {
                 if (err) {
                     res.status(500).json({ success: false, message: 'Gagal mendaftar', error: err.message });
                 } else {
@@ -294,12 +330,56 @@ app.post('/api/login', (req, res) => {
 });
 
 // ==========================================
-// 5. MENJALANKAN SERVER (IPv4 & IPv6 READY)
+// 5. ROUTE / ENDPOINT API PENGATURAN WEBSITE & FOOTER
+// ==========================================
+app.get('/api/settings', (req, res) => {
+    db.query('SELECT * FROM web_settings WHERE id = 1', (err, results) => {
+        if (err) return res.status(500).json({ success: false, message: err.message });
+        res.json({ success: true, settings: results[0] || {} });
+    });
+});
+
+app.post('/api/settings', (req, res) => {
+    const {
+        nama_organisasi, tagline, copyright_text, no_telp, email, alamat,
+        logo, favicon, link_facebook, link_instagram, link_tiktok, link_youtube,
+        link_linkedin, link_maps, smtp_host, smtp_port, smtp_user, smtp_password, smtp_from_email
+    } = req.body;
+
+    const sql = `
+        UPDATE web_settings SET 
+            nama_organisasi = ?, tagline = ?, copyright_text = ?, no_telp = ?, email = ?, alamat = ?,
+            logo = COALESCE(NULLIF(?, ''), logo),
+            favicon = COALESCE(NULLIF(?, ''), favicon),
+            link_facebook = ?, link_instagram = ?, link_tiktok = ?, link_youtube = ?,
+            link_linkedin = ?, link_maps = ?, smtp_host = ?, smtp_port = ?, smtp_user = ?,
+            smtp_password = COALESCE(NULLIF(?, ''), smtp_password),
+            smtp_from_email = ?
+        WHERE id = 1
+    `;
+
+    const values = [
+        nama_organisasi, tagline || 'Digital Library & Hub', copyright_text || '© 2026 LITERA. All Rights Reserved.',
+        no_telp, email, alamat, logo || '', favicon || '',
+        link_facebook, link_instagram, link_tiktok, link_youtube,
+        link_linkedin, link_maps, smtp_host, smtp_port || 587, smtp_user,
+        smtp_password || '', smtp_from_email
+    ];
+
+    db.query(sql, values, (err) => {
+        if (err) return res.status(500).json({ success: false, message: err.message });
+        res.json({ success: true, message: 'Pengaturan Footer & Website berhasil disimpan ke MySQL!' });
+    });
+});
+
+// ==========================================
+// 6. MENJALANKAN SERVER (IPv4 & IPv6 READY)
 // ==========================================
 app.listen(PORT, '0.0.0.0', () => {
     console.log("==================================================");
     console.log(`LITERA Backend API Server Running on port ${PORT}`);
     console.log(`Endpoint Books    : http://127.0.0.1:${PORT}/api/books`);
+    console.log(`Endpoint Settings : http://127.0.0.1:${PORT}/api/settings`);
     console.log(`Endpoint Checkout : http://127.0.0.1:${PORT}/api/checkout`);
     console.log(`Endpoint Midtrans : http://127.0.0.1:${PORT}/api/midtrans-token`);
     console.log(`Endpoint Auth     : http://127.0.0.1:${PORT}/api/login & /api/register`);

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - LITERA Hub</title>
+    <link id="admin-dynamic-favicon" rel="icon" href="../foto/logo.jpeg">
     <!-- Menghubungkan ke file CSS terpisah -->
     <link rel="stylesheet" href="dashboardadmin.css">
     <!-- FontAwesome Icons -->
@@ -42,7 +43,7 @@
         <div class="header-container">
             <!-- Brand Logo Litera -->
             <div class="brand-logo" onclick="location.href='../Katalog/index.html'" style="cursor: pointer;">
-                <img src="../foto/logo.jpeg" alt="Logo Litera" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=100&auto=format&fit=crop&q=80'">
+                <img id="admin-brand-logo-img" src="../foto/logo.jpeg" alt="Logo Litera" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=100&auto=format&fit=crop&q=80'">
                 <div class="brand-tagline">
                     <span class="brand-tagline-title">LITERA ADMIN</span>
                     <span class="brand-tagline-sub">Management Hub</span>
@@ -321,12 +322,20 @@
                                 <input type="text" id="setting-nama-organisasi" placeholder="LITERA Hub" required>
                             </div>
                             <div class="input-group">
+                                <label><i class="fa-solid fa-quote-left"></i> Tagline Website (`tagline`)</label>
+                                <input type="text" id="setting-tagline" placeholder="Digital Library & Hub" value="Digital Library & Hub">
+                            </div>
+                            <div class="input-group">
                                 <label><i class="fa-solid fa-phone"></i> Nomor Telepon (`no_telp`)</label>
                                 <input type="text" id="setting-no-telp" placeholder="081234567890" required>
                             </div>
                             <div class="input-group">
                                 <label><i class="fa-solid fa-envelope"></i> Email Resmi (`email`)</label>
                                 <input type="email" id="setting-email" placeholder="admin@litera.app" required>
+                            </div>
+                            <div class="input-group" style="grid-column: span 2;">
+                                <label><i class="fa-solid fa-copyright"></i> Teks Copyright Footer (`copyright_text`)</label>
+                                <input type="text" id="setting-copyright-text" placeholder="© 2026 LITERA. All Rights Reserved." value="© 2026 LITERA. All Rights Reserved.">
                             </div>
                             <div class="input-group" style="grid-column: span 2;">
                                 <label><i class="fa-solid fa-location-dot"></i> Alamat (`alamat`)</label>
@@ -340,11 +349,13 @@
                         <div class="form-grid" style="margin-bottom: 1.5rem;">
                             <div class="input-group">
                                 <label><i class="fa-solid fa-file-image"></i> Logo Utama (`logo`)</label>
-                                <input type="file" id="setting-logo" accept="image/*" style="padding: 0.3rem;">
+                                <input type="file" id="setting-logo" accept="image/*" style="padding: 0.3rem;" onchange="previewSettingImage(event, 'preview-setting-logo')">
+                                <img id="preview-setting-logo" src="../foto/logo.jpeg" alt="Preview Logo" style="margin-top: 0.5rem; width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;">
                             </div>
                             <div class="input-group">
                                 <label><i class="fa-solid fa-icons"></i> Favicon Website (`favicon`)</label>
-                                <input type="file" id="setting-favicon" accept="image/*" style="padding: 0.3rem;">
+                                <input type="file" id="setting-favicon" accept="image/*" style="padding: 0.3rem;" onchange="previewSettingImage(event, 'preview-setting-favicon')">
+                                <img id="preview-setting-favicon" src="../foto/logo.jpeg" alt="Preview Favicon" style="margin-top: 0.5rem; width: 40px; height: 40px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;">
                             </div>
                         </div>
 
@@ -400,12 +411,12 @@
                             </div>
                             <div class="input-group" style="grid-column: span 2;">
                                 <label><i class="fa-solid fa-paper-plane"></i> SMTP From Email (`smtp_from_email`)</label>
-                                <input type="email" id="setting-smtp-from-email" placeholder="LITERA Hub <no-reply@litera.app>">
+                                <input type="email" id="setting-smtp-from-email" placeholder="no-reply@litera.app">
                             </div>
                         </div>
 
                         <div class="form-actions" style="margin-top: 1.5rem;">
-                            <button type="submit" class="btn-submit">
+                            <button type="submit" id="btn-save-settings" class="btn-submit">
                                 <i class="fa-solid fa-floppy-disk"></i>
                                 <span>Simpan Pengaturan WebSetting</span>
                             </button>
@@ -569,7 +580,10 @@
                 targetMenuId = 'menu-inventory';
                 fetchAdminInventoryFromMySQL();
             }
-            if (sectionId === 'settings-section') targetMenuId = 'menu-settings';
+            if (sectionId === 'settings-section') {
+                targetMenuId = 'menu-settings';
+                fetchWebsiteSettingsForAdmin();
+            }
             if (sectionId === 'admin-profile-section') targetMenuId = 'menu-admin-profile';
             
             const targetMenu = document.getElementById(targetMenuId);
@@ -733,9 +747,125 @@
             }
         }
 
-        function handleWebsiteSettingsSubmit(e) {
+        // --- LOGIKA PENGATURAN WEBSITE & FOOTER (TERHUBUNG KE /api/settings) ---
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                if (!file) return resolve(null);
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = err => reject(err);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function previewSettingImage(event, previewElementId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgEl = document.getElementById(previewElementId);
+                    if (imgEl) imgEl.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function fetchWebsiteSettingsForAdmin() {
+            fetch('http://localhost:3000/api/settings')
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success || !data.settings) return;
+                    const s = data.settings;
+
+                    if (s.nama_organisasi) document.getElementById('setting-nama-organisasi').value = s.nama_organisasi;
+                    if (s.tagline) document.getElementById('setting-tagline').value = s.tagline;
+                    if (s.copyright_text) document.getElementById('setting-copyright-text').value = s.copyright_text;
+                    if (s.no_telp) document.getElementById('setting-no-telp').value = s.no_telp;
+                    if (s.email) document.getElementById('setting-email').value = s.email;
+                    if (s.alamat) document.getElementById('setting-alamat').value = s.alamat;
+
+                    if (s.logo) {
+                        document.getElementById('preview-setting-logo').src = s.logo;
+                        document.getElementById('admin-brand-logo-img').src = s.logo;
+                    }
+                    if (s.favicon) {
+                        document.getElementById('preview-setting-favicon').src = s.favicon;
+                        const fav = document.getElementById('admin-dynamic-favicon');
+                        if (fav) fav.href = s.favicon;
+                    }
+
+                    if (s.link_instagram) document.getElementById('setting-link-instagram').value = s.link_instagram;
+                    if (s.link_facebook) document.getElementById('setting-link-facebook').value = s.link_facebook;
+                    if (s.link_tiktok) document.getElementById('setting-link-tiktok').value = s.link_tiktok;
+                    if (s.link_youtube) document.getElementById('setting-link-youtube').value = s.link_youtube;
+                    if (s.link_linkedin) document.getElementById('setting-link-linkedin').value = s.link_linkedin;
+                    if (s.link_maps) document.getElementById('setting-link-maps').value = s.link_maps;
+
+                    if (s.smtp_host) document.getElementById('setting-smtp-host').value = s.smtp_host;
+                    if (s.smtp_port) document.getElementById('setting-smtp-port').value = s.smtp_port;
+                    if (s.smtp_user) document.getElementById('setting-smtp-user').value = s.smtp_user;
+                    if (s.smtp_from_email) document.getElementById('setting-smtp-from-email').value = s.smtp_from_email;
+                })
+                .catch(err => console.warn('Gagal memuat pengaturan dari server:', err));
+        }
+
+        async function handleWebsiteSettingsSubmit(e) {
             e.preventDefault();
-            alert('✅ Pengaturan WebSetting berhasil diperbarui!');
+
+            const saveBtn = document.getElementById('btn-save-settings');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Menyimpan...</span>';
+
+            try {
+                const logoFile = document.getElementById('setting-logo').files[0];
+                const faviconFile = document.getElementById('setting-favicon').files[0];
+
+                const logoBase64 = await fileToBase64(logoFile);
+                const faviconBase64 = await fileToBase64(faviconFile);
+
+                const payload = {
+                    nama_organisasi: document.getElementById('setting-nama-organisasi').value,
+                    tagline: document.getElementById('setting-tagline').value,
+                    copyright_text: document.getElementById('setting-copyright-text').value,
+                    no_telp: document.getElementById('setting-no-telp').value,
+                    email: document.getElementById('setting-email').value,
+                    alamat: document.getElementById('setting-alamat').value,
+                    logo: logoBase64 || '',
+                    favicon: faviconBase64 || '',
+                    link_instagram: document.getElementById('setting-link-instagram').value,
+                    link_facebook: document.getElementById('setting-link-facebook').value,
+                    link_tiktok: document.getElementById('setting-link-tiktok').value,
+                    link_youtube: document.getElementById('setting-link-youtube').value,
+                    link_linkedin: document.getElementById('setting-link-linkedin').value,
+                    link_maps: document.getElementById('setting-link-maps').value,
+                    smtp_host: document.getElementById('setting-smtp-host').value,
+                    smtp_port: Number(document.getElementById('setting-smtp-port').value) || 587,
+                    smtp_user: document.getElementById('setting-smtp-user').value,
+                    smtp_password: document.getElementById('setting-smtp-password').value,
+                    smtp_from_email: document.getElementById('setting-smtp-from-email').value
+                };
+
+                const response = await fetch('http://localhost:3000/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Pengaturan Footer & Website berhasil disimpan ke MySQL!');
+                    fetchWebsiteSettingsForAdmin();
+                } else {
+                    alert('Gagal menyimpan pengaturan: ' + (data.message || 'Terjadi kesalahan'));
+                }
+            } catch (err) {
+                console.error('Error simpan pengaturan:', err);
+                alert('Gagal terhubung ke server! Pastikan node server.js sedang berjalan.');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = originalText;
+            }
         }
 
         function previewAdminPhoto(event) {
@@ -762,6 +892,7 @@
         // Jalankan fungsi saat halaman pertama kali dibuka
         window.onload = function() {
             fetchAdminInventoryFromMySQL();
+            fetchWebsiteSettingsForAdmin();
         };
     </script>
 </body>

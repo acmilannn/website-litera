@@ -4,12 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LITERA - Platform E-Commerce & Marketplace Buku Bekas Makassar</title>
+    <link rel="icon" href="../foto/logo.jpeg">
     
     <!-- Link CSS -->
     <link rel="stylesheet" href="katalog.css">
     
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Midtrans Snap Sandbox JS -->
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-ynHTTuKeGHRedSFJ"></script>
+
     <style>
         .product-img-wrapper img {
             width: 100%;
@@ -271,7 +276,7 @@
                             <span id="total-val" style="color: var(--litera-red);">Rp 0</span>
                         </div>
                     </div>
-                    <button onclick="processCheckout()" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.75rem;">
+                    <button id="btn-checkout-pay" onclick="processCheckout()" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.75rem;">
                         <i class="fa-solid fa-lock"></i><span>Bayar Sekarang (Midtrans)</span>
                     </button>
                 </div>
@@ -344,14 +349,13 @@
 
     </main>
 
-    <!-- JAVASCRIPT LOGIC FRONTEND & MYSQL BACKEND SYNC -->
+    <!-- JAVASCRIPT LOGIC FRONTEND, MYSQL BACKEND & MIDTRANS SNAP -->
     <script>
-        let allBooks = []; // Menyimpan data master seluruh buku
-        let books = [];    // Data aktif yang sedang ditampilkan/difilter
+        let allBooks = [];
+        let books = [];
         let cart = [];
         let selectedPdp = null;
 
-        // Pemetaan Cover Lokal & Deskripsi Lengkap
         const localCovers = {
             "Risalah Kebangkitan - Penalaran terhadap Realitas Akhirat": { img: "../foto/risalah kebangkitan.jpeg", desc: "Judul: Risalah Kebangkitan – Penalaran terhadap Realitas Akhirat\nPenulis: Badiuzzaman Said Nursi (Risalah Nur Press)\nKondisi Fisik: Grade B+ (Layak Baca / Pre-loved Good Condition)\nDetail: Sudut cover kanan atas & bawah sedikit berlekuk/aus pemakaian wajar." },
             "Namaku Alam": { img: "../foto/namaku alam.jpeg", desc: "Judul: Namaku Alam\nPenulis: Leila S. Chudori (Penerbit KPG)\nKondisi Fisik: Grade A (Pre-loved Like New / Mulus Original)\nDetail: Kertas bersih, tidak ada coretan, sangat terawat." },
@@ -389,7 +393,6 @@
                             };
                         });
                         
-                        // Simpan ke master data dan books aktif tanpa duplikat
                         allBooks = mapped.filter((v, i, a) => a.findIndex(t => t.title === v.title) === i);
                         books = [...allBooks];
                     } else {
@@ -423,7 +426,6 @@
             btns.forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
 
-            // Kosongkan input pencarian saat kategori diklik agar sinkron
             document.getElementById('global-search').value = '';
 
             if (cat === 'All') {
@@ -434,7 +436,6 @@
             renderProducts(books);
         }
 
-        // FUNGSI PENCARIAN YANG DIPERBAIKI (Mencari berdasarkan Judul, Penulis, atau Kategori)
         function handleSearch(query) {
             const q = query.toLowerCase().trim();
             
@@ -443,7 +444,7 @@
             } else {
                 books = allBooks.filter(b => 
                     (b.title && b.title.toLowerCase().includes(q)) || 
-                    (b.author && b.author.toLowerCase().includes(q)) ||
+                    (b.author && b.author.toLowerCase().includes(q)) || 
                     (b.category && b.category.toLowerCase().includes(q))
                 );
             }
@@ -545,7 +546,7 @@
             document.getElementById('total-val').innerText = `Rp ${(subtotal + ongkir).toLocaleString('id-ID')}`;
         }
 
-        function processCheckout() {
+        async function processCheckout() {
             if (cart.length === 0) {
                 alert("Keranjang masih kosong!");
                 return;
@@ -574,33 +575,96 @@
 
             let purchasedItems = cart.map(item => item.title).join(" | ");
 
-            fetch('http://localhost:3000/api/checkout', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    customer_name: name,
-                    customer_phone: phone,
-                    region: region,
-                    address: address,
-                    courier: courier,
-                    payment_method: payment,
-                    total_price: totalPrice,
-                    items: purchasedItems
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert("✅ Checkout Berhasil & Disimpan ke Database MySQL!");
-                cart = [];
-                document.getElementById('cart-badge').innerText = "0";
-                navigate('orders');
-            })
-            .catch(err => {
-                alert("✅ Checkout Berhasil! Pesanan diproses.");
-                cart = [];
-                document.getElementById('cart-badge').innerText = "0";
-                navigate('orders');
-            });
+            const btnPay = document.getElementById('btn-checkout-pay');
+            const originalBtnHtml = btnPay.innerHTML;
+            btnPay.disabled = true;
+            btnPay.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Memproses Pembayaran...</span>';
+
+            try {
+                // 1. Simpan pesanan ke MySQL terlebih dahulu
+                const checkoutRes = await fetch('http://localhost:3000/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customer_name: name,
+                        customer_phone: phone,
+                        region: region,
+                        address: address,
+                        courier: courier,
+                        payment_method: payment,
+                        total_price: totalPrice,
+                        items: purchasedItems
+                    })
+                });
+                const checkoutData = await checkoutRes.json();
+
+                if (!checkoutData.success) {
+                    alert("Gagal menyimpan pesanan: " + (checkoutData.message || "Error server"));
+                    return;
+                }
+
+                // Jika memilih COD, langsung selesai tanpa pop-up Midtrans
+                if (payment === 'COD') {
+                    alert("✅ Pesanan COD berhasil dibuat & disimpan ke MySQL!");
+                    cart = [];
+                    document.getElementById('cart-badge').innerText = "0";
+                    navigate('orders');
+                    return;
+                }
+
+                // 2. Minta Snap Token dari backend (/api/midtrans-token)
+                const orderId = `LITERA-${checkoutData.order_id || Date.now()}-${Date.now()}`;
+                const tokenRes = await fetch('http://localhost:3000/api/midtrans-token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        orderId: orderId,
+                        totalAmount: totalPrice,
+                        customerName: name,
+                        customerPhone: phone,
+                        customerEmail: 'pembeli@litera.app'
+                    })
+                });
+                const tokenData = await tokenRes.json();
+
+                if (!tokenData.success || !tokenData.token) {
+                    alert("Gagal terhubung ke Midtrans: " + (tokenData.message || "Token tidak diterima"));
+                    return;
+                }
+
+                // 3. Tampilkan Pop-up Pembayaran Midtrans Snap
+                if (typeof window.snap === 'undefined') {
+                    alert("Script Midtrans Snap belum termuat. Periksa koneksi internet atau matikan AdBlocker/Tracking Prevention.");
+                    return;
+                }
+
+                window.snap.pay(tokenData.token, {
+                    onSuccess: function(result) {
+                        alert("✅ Pembayaran Midtrans Berhasil! Pesanan sedang diproses.");
+                        cart = [];
+                        document.getElementById('cart-badge').innerText = "0";
+                        navigate('orders');
+                    },
+                    onPending: function(result) {
+                        alert("⏳ Menunggu pembayaran Anda diselesaikan di Midtrans.");
+                        cart = [];
+                        document.getElementById('cart-badge').innerText = "0";
+                        navigate('orders');
+                    },
+                    onError: function(result) {
+                        alert("❌ Pembayaran gagal atau dibatalkan.");
+                    },
+                    onClose: function() {
+                        alert("⚠️ Jendela pembayaran ditutup sebelum transaksi selesai.");
+                    }
+                });
+            } catch (err) {
+                console.error("Checkout / Midtrans Error:", err);
+                alert("Gagal terhubung ke server backend (Pastikan node server.js berjalan).");
+            } finally {
+                btnPay.disabled = false;
+                btnPay.innerHTML = originalBtnHtml;
+            }
         }
 
         function handleReturnSubmit(e) {

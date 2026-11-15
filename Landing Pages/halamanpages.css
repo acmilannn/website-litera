@@ -474,3 +474,116 @@ footer p {
         justify-content: center;
     }
 }
+/* =========================================
+   FOOTER DINAMIS LITERA HUB
+   ========================================= */
+.litera-main-footer {
+    background-color: #111827;
+    color: #f9fafb;
+    padding: 3.5rem 2rem 2.5rem;
+    margin-top: 3rem;
+    font-family: inherit;
+}
+
+.litera-footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 2.5rem;
+    text-align: left;
+}
+
+.footer-brand-row {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.footer-brand-row img {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #ffffff;
+}
+
+.footer-brand-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+}
+
+.footer-brand-sub {
+    font-size: 0.78rem;
+    color: #9ca3af;
+}
+
+.footer-copyright {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin-bottom: 1.25rem;
+}
+
+.footer-social-links {
+    display: flex;
+    gap: 0.65rem;
+}
+
+.footer-social-links a {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: #1f2937;
+    color: #d1d5db;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.footer-social-links a:hover {
+    background-color: #701D28;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+.footer-nav-col h4 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.footer-nav-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.footer-nav-col ul li a {
+    color: #9ca3af;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.2s ease;
+}
+
+.footer-nav-col ul li a:hover {
+    color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .litera-footer-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
