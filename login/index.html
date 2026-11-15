@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk - LITERA</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="bg-overlay" style="pointer-events: none !important;"></div>
+
+    <div class="auth-container" style="position: relative; z-index: 10;">
+        <div class="glass-card">
+            
+            <div class="auth-header">
+                <div class="brand-logo-img">
+                    <img src="../foto/logo.jpeg" alt="Logo Litera">
+                </div>
+                <h1>Selamat Datang Kembali</h1>
+                <p>Masuk untuk melanjutkan perjalanan literasi Anda di Litera</p>
+            </div>
+
+            <!-- Form Login dengan onsubmit langsung -->
+            <form class="auth-form" id="form-login" onsubmit="eksekusiLogin(event)">
+                
+                <div class="input-group">
+                    <span class="input-icon"><i class="fa-solid fa-envelope"></i></span>
+                    <input type="email" id="login-email" placeholder="Email Akademik / Pribadi" required>
+                </div>
+
+                <div class="input-group password-group">
+                    <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+                    <input type="password" id="login-password" placeholder="Kata Sandi" required>
+                    <span class="password-toggle" id="togglePassword"><i class="fa-solid fa-eye-slash"></i></span>
+                </div>
+
+                <div class="options-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox">
+                        <span>Ingat saya</span>
+                    </label>
+                    <a href="#" class="forgot-link">Lupa sandi?</a>
+                </div>
+
+                <!-- Tombol Submit -->
+                <button type="submit" class="btn-submit" id="btn-submit-login">
+                    <span>Masuk ke Akun</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>ATAU</span>
+            </div>
+
+            <div class="social-login">
+                <button type="button" class="btn-social">
+                    <i class="fa-brands fa-google" style="color: #ea4335;"></i>
+                    <span>Google</span>
+                </button>
+                <button type="button" class="btn-social">
+                    <i class="fa-brands fa-apple" style="color: #111111;"></i>
+                    <span>Apple</span>
+                </button>
+            </div>
+
+            <div class="auth-footer">
+                <span>Belum punya akun? <a href="../Regist/index.html">Daftar sekarang</a></span>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+async function eksekusiLogin(e) {
+    if (e) e.preventDefault();
+    
+    console.log("--> Tombol terdeteksi! Memulai eksekusi login...");
+
+    const emailInput = document.getElementById('login-email');
+    const passwordInput = document.getElementById('login-password');
+
+    if (!emailInput || !passwordInput) {
+        alert('Elemen input email atau password tidak ditemukan!');
+        return;
+    }
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (!email || !password) {
+        alert('Harap isi email dan kata sandi!');
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:3000/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const result = await response.json();
+        console.log("--> Respons dari server backend:", result);
+
+        if (result.success) {
+            const existingUser = JSON.parse(localStorage.getItem('user')) || {};
+            const userData = { ...existingUser, ...result.user };
+            localStorage.setItem('user', JSON.stringify(userData));
+
+            alert(`Selamat datang kembali, ${userData.nama || 'Pengguna'}!`);
+
+            // Menyebrang (pindah halaman) sesuai role
+            if (userData.role === 'admin') {
+                window.location.href = '../Dashboard Admin/index.html';
+            } else {
+                window.location.href = '../Katalog/index.html';
+            }
+        } else {
+            alert(result.message || 'Login gagal! Periksa email/password Anda.');
+        }
+    } catch (err) {
+        console.error('Fetch error:', err);
+        alert('Gagal terhubung ke server backend! Pastikan node server.js berjalan di terminal.');
+    }
+}
+
+// Fitur Toggle Mata Password
+document.addEventListener('DOMContentLoaded', function () {
+    const passwordInput = document.getElementById('login-password');
+    const togglePasswordBtn = document.getElementById('togglePassword');
+    if (togglePasswordBtn && passwordInput) {
+        togglePasswordBtn.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            const icon = this.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            }
+        });
+    }
+});
+</script>
+
+</body>
+</html>
